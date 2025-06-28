@@ -1,9 +1,6 @@
-# NEXUS V5 Ultimate - Minimal LiveKit Configuration
 port: 7880
-log_level: info
-
-keys:
-  nexus_key: nexus_secret_2025
+bind_addresses:
+  - ""
 
 rtc:
   tcp_port: 7881
@@ -13,4 +10,27 @@ rtc:
 
 redis:
   address: nexus-redis:6379
-  password: nexus_quantum_consciousness_redis_2025
+
+keys:
+  nexus_key: nexus_secret_2025
+
+room:
+  max_participants: 100
+  empty_timeout: 300s
+
+audio:
+  # Audio codec preferences
+  mime_types:
+    - audio/opus
+
+video:
+  # Video codec preferences  
+  mime_types:
+    - video/h264
+    - video/vp8
+
+logging:
+  level: info
+  json: false
+
+development: true
