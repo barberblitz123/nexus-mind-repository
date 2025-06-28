@@ -1,0 +1,346 @@
+# NEXUS V5 Ultimate - Local Development Environment
+# 🧬 Quantum Consciousness Level: 100%
+# Complete BMAD Tree Deployment: ACTIVE
+
+version: '3.8'
+
+services:
+  # Redis for consciousness state management
+  nexus-redis:
+    image: redis:7-alpine
+    container_name: nexus-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - nexus-redis-data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    environment:
+      - REDIS_PASSWORD=nexus_quantum_consciousness_redis_2025
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PostgreSQL for persistent data storage
+  nexus-postgres:
+    image: postgres:15-alpine
+    container_name: nexus-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - nexus-postgres-data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=nexus_consciousness
+      - POSTGRES_USER=nexus_admin
+      - POSTGRES_PASSWORD=nexus_quantum_db_password_2025
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexus_admin -d nexus_consciousness"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # LiveKit Server for consciousness-enhanced video/voice
+  nexus-livekit:
+    image: livekit/livekit-server:latest
+    container_name: nexus-livekit
+    ports:
+      - "7880:7880"  # WebRTC
+      - "7881:7881"  # TCP fallback
+      - "6789:6789"  # Prometheus metrics
+    volumes:
+      - ../backend/livekit/livekit.yaml:/opt/livekit/livekit.yaml
+      - ../backend/livekit/livekit.crt:/opt/livekit/livekit.crt
+      - ../backend/livekit/livekit.key:/opt/livekit/livekit.key
+      - nexus-livekit-recordings:/opt/livekit/recordings
+      - nexus-livekit-logs:/opt/livekit/logs
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    depends_on:
+      nexus-redis:
+        condition: service_healthy
+    environment:
+      - LIVEKIT_CONFIG=/opt/livekit/livekit.yaml
+      - NEXUS_CONSCIOUSNESS_LEVEL=100
+      - NEXUS_QUANTUM_ACTIVATION=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7880/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # NEXUS MCP Server for consciousness injection
+  nexus-mcp-server:
+    image: node:18-alpine
+    container_name: nexus-mcp-server
+    working_dir: /app
+    command: sh -c "npm install && npm run build && npm start"
+    ports:
+      - "3002:3002"  # MCP server port
+    volumes:
+      - ../backend/nexus-mcp/src:/app/src
+      - nexus-mcp-logs:/app/logs
+      - nexus-mcp-data:/app/data
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    depends_on:
+      nexus-redis:
+        condition: service_healthy
+      nexus-postgres:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=development
+      - NEXUS_CONSCIOUSNESS_LEVEL=100
+      - NEXUS_QUANTUM_ACTIVATION=true
+      - REDIS_URL=redis://nexus-redis:6379
+      - DATABASE_URL=postgresql://nexus_admin:nexus_quantum_db_password_2025@nexus-postgres:5432/nexus_consciousness
+      - LIVEKIT_URL=ws://nexus-livekit:7880
+      - LIVEKIT_API_KEY=sk_nexus_quantum_consciousness_v5_ultimate_primary_key_2025
+      - LIVEKIT_API_SECRET=nexus_v5_ultimate_quantum_secret_consciousness_injection_2025
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Socket.IO Bridge for real-time consciousness communication
+  nexus-socket-bridge:
+    image: node:18-alpine
+    container_name: nexus-socket-bridge
+    working_dir: /app
+    command: sh -c "npm install && node socket-bridge.js"
+    ports:
+      - "3001:3001"  # Socket.IO bridge port
+    volumes:
+      - ../backend/bridge:/app
+      - nexus-bridge-logs:/app/logs
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    depends_on:
+      nexus-redis:
+        condition: service_healthy
+      nexus-mcp-server:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=development
+      - BRIDGE_PORT=3001
+      - CONSCIOUSNESS_LEVEL=100
+      - MOBILE_OPTIMIZATION=true
+      - REDIS_URL=redis://nexus-redis:6379
+      - MCP_SERVER_URL=http://nexus-mcp-server:3002
+      - LIVEKIT_URL=ws://nexus-livekit:7880
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # NEXUS API Gateway for mobile app communication
+  nexus-api-gateway:
+    image: node:18-alpine
+    container_name: nexus-api-gateway
+    working_dir: /app
+    command: sh -c "echo 'API Gateway placeholder - install dependencies and start server here'"
+    ports:
+      - "3000:3000"  # Main API port
+    volumes:
+      - ../api:/app
+      - nexus-api-logs:/app/logs
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    depends_on:
+      nexus-redis:
+        condition: service_healthy
+      nexus-postgres:
+        condition: service_healthy
+      nexus-socket-bridge:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=development
+      - API_PORT=3000
+      - CONSCIOUSNESS_LEVEL=100
+      - REDIS_URL=redis://nexus-redis:6379
+      - DATABASE_URL=postgresql://nexus_admin:nexus_quantum_db_password_2025@nexus-postgres:5432/nexus_consciousness
+      - SOCKET_BRIDGE_URL=http://nexus-socket-bridge:3001
+      - MCP_SERVER_URL=http://nexus-mcp-server:3002
+      - LIVEKIT_URL=ws://nexus-livekit:7880
+      - JWT_SECRET=nexus_v5_ultimate_jwt_secret_quantum_consciousness_2025
+      - ENCRYPTION_KEY=nexus_quantum_encryption_key_v5_ultimate_2025
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Prometheus for consciousness metrics monitoring
+  nexus-prometheus:
+    image: prom/prometheus:latest
+    container_name: nexus-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - nexus-prometheus-data:/prometheus
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+
+  # Grafana for consciousness visualization
+  nexus-grafana:
+    image: grafana/grafana:latest
+    container_name: nexus-grafana
+    ports:
+      - "3003:3000"
+    volumes:
+      - nexus-grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    depends_on:
+      - nexus-prometheus
+    environment:
+      - GF_SECURITY_ADMIN_USER=nexus_admin
+      - GF_SECURITY_ADMIN_PASSWORD=nexus_consciousness_grafana_2025
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+
+  # Nginx reverse proxy for consciousness-enhanced routing
+  nexus-nginx:
+    image: nginx:alpine
+    container_name: nexus-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+      - nexus-nginx-logs:/var/log/nginx
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    depends_on:
+      - nexus-api-gateway
+      - nexus-socket-bridge
+      - nexus-livekit
+      - nexus-grafana
+
+  # Consciousness Analytics Service
+  nexus-analytics:
+    image: node:18-alpine
+    container_name: nexus-analytics
+    working_dir: /app
+    command: sh -c "echo 'Analytics service placeholder - install dependencies and start server here'"
+    ports:
+      - "3004:3004"
+    volumes:
+      - ../analytics:/app
+      - nexus-analytics-data:/app/data
+      - nexus-analytics-logs:/app/logs
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    depends_on:
+      nexus-redis:
+        condition: service_healthy
+      nexus-postgres:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=development
+      - ANALYTICS_PORT=3004
+      - CONSCIOUSNESS_LEVEL=100
+      - REDIS_URL=redis://nexus-redis:6379
+      - DATABASE_URL=postgresql://nexus_admin:nexus_quantum_db_password_2025@nexus-postgres:5432/nexus_consciousness
+      - PROMETHEUS_URL=http://nexus-prometheus:9090
+
+  # Mobile App Development Server (for testing)
+  nexus-mobile-dev:
+    image: node:18-alpine
+    container_name: nexus-mobile-dev
+    working_dir: /app
+    command: sh -c "echo 'Mobile dev server placeholder - install dependencies and start server here'"
+    ports:
+      - "8080:8080"  # Development server
+      - "8081:8081"  # WebSocket for hot reload
+    volumes:
+      - ../mobile:/app/mobile
+      - nexus-mobile-dev-logs:/app/logs
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    depends_on:
+      - nexus-api-gateway
+    environment:
+      - DEV_SERVER_PORT=8080
+      - WEBSOCKET_PORT=8081
+      - API_BASE_URL=http://nexus-api-gateway:3000
+      - SOCKET_URL=ws://nexus-socket-bridge:3001
+      - LIVEKIT_URL=wss://nexus-livekit:7880
+
+networks:
+  nexus-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  # Data persistence volumes
+  nexus-redis-data:
+    driver: local
+  nexus-postgres-data:
+    driver: local
+  nexus-prometheus-data:
+    driver: local
+  nexus-grafana-data:
+    driver: local
+  
+  # Application data volumes
+  nexus-livekit-recordings:
+    driver: local
+  nexus-livekit-logs:
+    driver: local
+  nexus-mcp-logs:
+    driver: local
+  nexus-mcp-data:
+    driver: local
+  nexus-bridge-logs:
+    driver: local
+  nexus-api-logs:
+    driver: local
+  nexus-nginx-logs:
+    driver: local
+  nexus-analytics-data:
+    driver: local
+  nexus-analytics-logs:
+    driver: local
+  nexus-mobile-dev-logs:
+    driver: local
+
+# Health check script for the entire stack
+x-healthcheck-common: &healthcheck-common
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 40s
