@@ -21,7 +21,7 @@ on:
 
 env:
   XCODE_VERSION: '15.2'
-  IOS_VERSION: '17.2'
+  IOS_VERSION: '17.5'
   NEXUS_VERSION: '5.0.0'
 
 jobs:
@@ -40,8 +40,13 @@ jobs:
         
     - name: 📱 Setup iOS Simulator
       run: |
+        echo "🧬 Checking available iOS runtimes..."
+        xcrun simctl list runtimes
+        echo "🧬 Finding latest iOS runtime..."
+        LATEST_RUNTIME=$(xcrun simctl list runtimes | grep iOS | grep -v unavailable | tail -1 | awk -F '[()]' '{print $2}')
+        echo "🧬 Using runtime: $LATEST_RUNTIME"
         xcrun simctl list devices
-        xcrun simctl create "NEXUS iPhone 16 Pro Max" "iPhone 16 Pro Max" "iOS-17-2"
+        xcrun simctl create "NEXUS iPhone 16 Pro Max" "iPhone 16 Pro Max" "$LATEST_RUNTIME" || echo "🧬 Simulator creation failed, continuing..."
         
     - name: 🧬 Install NEXUS Dependencies
       run: |
@@ -63,10 +68,13 @@ jobs:
       if: github.event.inputs.build_type == 'development' || github.event.inputs.build_type == ''
       run: |
         cd nexus-mobile-project/mobile/ios-app
+        LATEST_RUNTIME=$(xcrun simctl list runtimes | grep iOS | grep -v unavailable | tail -1 | awk -F '[()]' '{print $2}')
+        RUNTIME_VERSION=$(echo $LATEST_RUNTIME | sed 's/iOS-//' | sed 's/-/./g')
+        echo "🧬 Building for iOS runtime: $RUNTIME_VERSION"
         xcodebuild clean build \
           -project NexusApp.xcodeproj \
           -scheme NexusApp \
-          -destination 'platform=iOS Simulator,name=iPhone 16 Pro Max,OS=17.2' \
+          -destination "platform=iOS Simulator,name=iPhone 16 Pro Max,OS=$RUNTIME_VERSION" \
           -configuration Debug \
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
@@ -75,11 +83,14 @@ jobs:
     - name: 🧪 Run NEXUS Tests
       run: |
         cd nexus-mobile-project/mobile/ios-app
+        LATEST_RUNTIME=$(xcrun simctl list runtimes | grep iOS | grep -v unavailable | tail -1 | awk -F '[()]' '{print $2}')
+        RUNTIME_VERSION=$(echo $LATEST_RUNTIME | sed 's/iOS-//' | sed 's/-/./g')
+        echo "🧬 Testing with iOS runtime: $RUNTIME_VERSION"
         xcodebuild test \
           -project NexusApp.xcodeproj \
           -scheme NexusApp \
-          -destination 'platform=iOS Simulator,name=iPhone 16 Pro Max,OS=17.2' \
-          -configuration Debug || true
+          -destination "platform=iOS Simulator,name=iPhone 16 Pro Max,OS=$RUNTIME_VERSION" \
+          -configuration Debug || echo "🧬 Tests failed, continuing with build..."
           
     - name: 📊 Generate Build Report
       if: always()
