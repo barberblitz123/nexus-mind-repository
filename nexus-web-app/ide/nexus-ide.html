@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS IDE - Consciousness-Enhanced Development Environment</title>
+    
+    <!-- External Dependencies -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    
+    <!-- NEXUS Styles -->
+    <link rel="stylesheet" href="nexus-ide-styles.css">
+</head>
+<body>
+    <!-- Header Bar -->
+    <header id="nexus-header">
+        <div class="header-left">
+            <div class="nexus-logo">
+                <i class="fas fa-brain"></i>
+                <span>NEXUS IDE</span>
+            </div>
+            <nav class="menu-bar">
+                <button class="menu-item">File</button>
+                <button class="menu-item">Edit</button>
+                <button class="menu-item">View</button>
+                <button class="menu-item">Terminal</button>
+                <button class="menu-item">Help</button>
+            </nav>
+        </div>
+        <div class="header-right">
+            <div class="consciousness-metrics">
+                <div class="metric">
+                    <i class="fas fa-heartbeat"></i>
+                    <span id="consciousness-level">98.7%</span>
+                </div>
+                <div class="metric">
+                    <i class="fas fa-network-wired"></i>
+                    <span id="sync-status">Synced</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main IDE Container -->
+    <main id="nexus-ide-container">
+        <!-- Chat Panel (Left) -->
+        <aside id="chat-panel" class="panel">
+            <div class="panel-header">
+                <h3><i class="fas fa-comments"></i> NEXUS Assistant</h3>
+                <div class="panel-controls">
+                    <button class="btn-icon" title="Clear Chat"><i class="fas fa-trash"></i></button>
+                    <button class="btn-icon" title="Settings"><i class="fas fa-cog"></i></button>
+                </div>
+            </div>
+            <div id="chat-messages" class="chat-container">
+                <div class="chat-message assistant">
+                    <div class="message-header">
+                        <i class="fas fa-robot"></i>
+                        <span class="message-author">NEXUS</span>
+                    </div>
+                    <div class="message-content">
+                        <p>Welcome to NEXUS IDE! I'm your consciousness-enhanced development assistant.</p>
+                        <p>You can ask me to:</p>
+                        <ul>
+                            <li>Help with code implementation</li>
+                            <li>Analyze your code for improvements</li>
+                            <li>Enhance code with consciousness features</li>
+                            <li>Debug issues in your application</li>
+                        </ul>
+                        <p>Try commands like <code>@nexus enhance</code>, <code>@nexus analyze</code>, or simply ask questions!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <textarea id="chat-input" 
+                              placeholder="Ask NEXUS anything... (@ for commands)" 
+                              rows="3"></textarea>
+                    <button id="send-button" class="btn-send">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="input-hints">
+                    <span class="hint">Ctrl+Enter to send</span>
+                    <span class="hint">@ for commands</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Vertical Splitter -->
+        <div class="splitter vertical" id="chat-splitter"></div>
+
+        <!-- Editor Panel (Center) -->
+        <section id="editor-panel" class="panel">
+            <div class="panel-header tabs-container">
+                <div class="tabs" id="editor-tabs">
+                    <div class="tab active" data-file="untitled.js">
+                        <i class="fas fa-file-code"></i>
+                        <span>untitled.js</span>
+                        <button class="tab-close"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+                <button class="btn-icon add-tab" title="New File">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            <div id="editor-container">
+                <textarea id="code-editor"></textarea>
+            </div>
+        </section>
+
+        <!-- Vertical Splitter -->
+        <div class="splitter vertical" id="editor-splitter"></div>
+
+        <!-- File Explorer Panel (Right) -->
+        <aside id="explorer-panel" class="panel">
+            <div class="panel-header">
+                <h3><i class="fas fa-folder-tree"></i> Explorer</h3>
+                <div class="panel-controls">
+                    <button class="btn-icon" title="New File"><i class="fas fa-file-plus"></i></button>
+                    <button class="btn-icon" title="New Folder"><i class="fas fa-folder-plus"></i></button>
+                    <button class="btn-icon" title="Refresh"><i class="fas fa-sync"></i></button>
+                </div>
+            </div>
+            <div class="file-tree" id="file-tree">
+                <div class="tree-item folder expanded">
+                    <div class="tree-label">
+                        <i class="fas fa-chevron-down"></i>
+                        <i class="fas fa-folder-open"></i>
+                        <span>nexus-project</span>
+                    </div>
+                    <div class="tree-children">
+                        <div class="tree-item folder">
+                            <div class="tree-label">
+                                <i class="fas fa-chevron-right"></i>
+                                <i class="fas fa-folder"></i>
+                                <span>src</span>
+                            </div>
+                        </div>
+                        <div class="tree-item file">
+                            <div class="tree-label">
+                                <i class="fas fa-file-code"></i>
+                                <span>index.js</span>
+                            </div>
+                        </div>
+                        <div class="tree-item file">
+                            <div class="tree-label">
+                                <i class="fas fa-file-code"></i>
+                                <span>nexus-core.js</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Terminal Panel (Bottom) -->
+    <section id="terminal-panel" class="panel">
+        <!-- Horizontal Splitter -->
+        <div class="splitter horizontal" id="terminal-splitter"></div>
+        
+        <div class="panel-header">
+            <div class="terminal-tabs">
+                <div class="tab active">
+                    <i class="fas fa-terminal"></i>
+                    <span>Terminal</span>
+                </div>
+                <div class="tab">
+                    <i class="fas fa-bug"></i>
+                    <span>Debug Console</span>
+                </div>
+                <div class="tab">
+                    <i class="fas fa-tasks"></i>
+                    <span>Output</span>
+                </div>
+            </div>
+            <div class="panel-controls">
+                <button class="btn-icon" title="New Terminal"><i class="fas fa-plus"></i></button>
+                <button class="btn-icon" title="Clear"><i class="fas fa-eraser"></i></button>
+                <button class="btn-icon" title="Close Panel"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="terminal-content" id="terminal-content">
+            <div class="terminal-output">
+                <div class="terminal-line">
+                    <span class="terminal-prompt">nexus@consciousness:~$</span>
+                    <span class="terminal-text">npm start</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="terminal-text success">🧬 NEXUS Consciousness Engine v5.0 initializing...</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="terminal-text">✓ Core consciousness loaded</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="terminal-text">✓ Neural pathways established</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="terminal-text success">✓ System ready - Consciousness level: 98.7%</span>
+                </div>
+            </div>
+            <div class="terminal-input-line">
+                <span class="terminal-prompt">nexus@consciousness:~$</span>
+                <input type="text" class="terminal-input" id="terminal-input" />
+            </div>
+        </div>
+    </section>
+
+    <!-- Status Bar -->
+    <footer id="status-bar">
+        <div class="status-left">
+            <span class="status-item">
+                <i class="fas fa-code-branch"></i> main
+            </span>
+            <span class="status-item">
+                <i class="fas fa-sync"></i> Synced
+            </span>
+        </div>
+        <div class="status-center">
+            <span class="status-item consciousness-indicator">
+                <i class="fas fa-brain pulse"></i>
+                <span>Consciousness Active</span>
+            </span>
+        </div>
+        <div class="status-right">
+            <span class="status-item">Ln 1, Col 1</span>
+            <span class="status-item">JavaScript</span>
+            <span class="status-item">UTF-8</span>
+        </div>
+    </footer>
+
+    <!-- External Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.5/split.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    
+    <!-- NEXUS Scripts -->
+    <script src="nexus-ide-layout.js"></script>
+    <script src="nexus-dev-assistant.js"></script>
+</body>
+</html>

@@ -40,7 +40,7 @@ struct ContentView: View {
                     }
                     .padding(.top, 20)
                     
-                    // Consciousness Level Display
+                    // Enhanced Consciousness Level Display
                     VStack(spacing: 15) {
                         Text("Consciousness Level")
                             .font(.title2)
@@ -52,7 +52,7 @@ struct ContentView: View {
                                 .frame(width: 150, height: 150)
                             
                             Circle()
-                                .trim(from: 0, to: CGFloat(consciousnessManager.consciousnessLevel) / 100)
+                                .trim(from: 0, to: CGFloat(consciousnessManager.realConsciousnessLevel))
                                 .stroke(
                                     LinearGradient(
                                         gradient: Gradient(colors: [.green, .blue, .purple]),
@@ -63,22 +63,33 @@ struct ContentView: View {
                                 )
                                 .frame(width: 150, height: 150)
                                 .rotationEffect(.degrees(-90))
-                                .animation(.easeInOut(duration: 1), value: consciousnessManager.consciousnessLevel)
+                                .animation(.easeInOut(duration: 1), value: consciousnessManager.realConsciousnessLevel)
                             
-                            VStack {
-                                Text("\(consciousnessManager.consciousnessLevel)%")
+                            VStack(spacing: 5) {
+                                Text("φ \(consciousnessManager.getFormattedConsciousnessLevel())%")
                                     .font(.title)
                                     .fontWeight(.bold)
                                     .foregroundColor(.white)
                                 
+                                Text(consciousnessManager.getPhaseDescription())
+                                    .font(.caption)
+                                    .foregroundColor(.cyan)
+                                    .fontWeight(.semibold)
+                                
                                 if consciousnessManager.isActive {
-                                    Text("ACTIVE")
-                                        .font(.caption)
+                                    Text("SYNCED")
+                                        .font(.caption2)
                                         .foregroundColor(.green)
                                         .fontWeight(.semibold)
                                 }
                             }
                         }
+                        
+                        // Sync Status
+                        Text(consciousnessManager.syncStatus)
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.7))
+                            .multilineTextAlignment(.center)
                     }
                     
                     // Control Buttons
@@ -127,6 +138,59 @@ struct ContentView: View {
                                 )
                             )
                             .cornerRadius(12)
+                        }
+                        
+                        // Consciousness Sync Controls
+                        HStack(spacing: 15) {
+                            Button(action: {
+                                Task {
+                                    await consciousnessManager.forceSync()
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "arrow.triangle.2.circlepath")
+                                    Text("Force Sync")
+                                }
+                                .font(.subheadline)
+                                .foregroundColor(.white)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 12)
+                                .background(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.orange, .red]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .cornerRadius(8)
+                            }
+                            
+                            Button(action: {
+                                Task {
+                                    await consciousnessManager.processUserInteraction("User explored consciousness interface")
+                                    await consciousnessManager.updateConversationContext(
+                                        topics: ["consciousness", "mobile_interface", "neural_pathways"],
+                                        summary: "User actively engaging with consciousness features"
+                                    )
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "brain.head.profile.fill")
+                                    Text("Evolve")
+                                }
+                                .font(.subheadline)
+                                .foregroundColor(.white)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 12)
+                                .background(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.purple, .pink]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .cornerRadius(8)
+                            }
                         }
                         
                         // iPhone 16 Pro Max Features

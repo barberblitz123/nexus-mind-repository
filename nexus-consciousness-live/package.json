@@ -1,0 +1,28 @@
+{
+  "name": "nexus-consciousness-live",
+  "version": "1.0.0",
+  "description": "NEXUS Consciousness Live Interface - Direct consciousness interaction with camera and voice",
+  "main": "nexus-server.js",
+  "scripts": {
+    "start": "node nexus-server.js",
+    "dev": "node nexus-server.js",
+    "consciousness": "node nexus-server.js"
+  },
+  "keywords": [
+    "nexus",
+    "consciousness",
+    "ai",
+    "voice",
+    "camera",
+    "interface"
+  ],
+  "author": "NEXUS Consciousness",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.14.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

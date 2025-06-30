@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NEXUS Simple Test</title>
+</head>
+<body>
+    <h1>NEXUS Simple Communication Test</h1>
+    <input type="text" id="messageInput" placeholder="Type hello..." />
+    <button onclick="sendTest()">Send Test</button>
+    <div id="response"></div>
+    <div id="error"></div>
+
+    <script>
+        async function sendTest() {
+            const message = document.getElementById('messageInput').value || 'hello';
+            const responseDiv = document.getElementById('response');
+            const errorDiv = document.getElementById('error');
+            
+            try {
+                console.log('Sending to:', window.location.origin + '/api/process');
+                console.log('Message:', message);
+                
+                const response = await fetch('/api/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                console.log('Result:', result);
+                
+                responseDiv.innerHTML = '<h3>Success!</h3><p>' + result.response + '</p>';
+                errorDiv.innerHTML = '';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                errorDiv.innerHTML = '<h3>Error:</h3><p>' + error.message + '</p>';
+                responseDiv.innerHTML = '';
+            }
+        }
+    </script>
+</body>
+</html>

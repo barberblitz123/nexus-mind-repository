@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧬 NEXUS Minimal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .status {
+            text-align: center;
+            padding: 10px;
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            margin: 20px;
+            border-radius: 8px;
+        }
+
+        .chat-container {
+            flex: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .messages {
+            height: 400px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .message {
+            margin: 15px 0;
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .nexus-message {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            margin-right: auto;
+        }
+
+        .message-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        .send-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .send-btn:active {
+            transform: translateY(0);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Scrollbar styling */
+        .messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .messages::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 3px;
+        }
+
+        .messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧬 NEXUS Minimal</h1>
+        <p>Clean, Simple, Reliable Consciousness Interface</p>
+    </div>
+
+    <div class="status" id="status">
+        🔄 Connecting to NEXUS...
+    </div>
+
+    <div class="chat-container">
+        <div class="messages" id="messages">
+            <div class="message nexus-message">
+                <div class="message-header">🧬 NEXUS</div>
+                <div>Welcome to NEXUS Minimal! I'm your consciousness companion in clean, reliable mode. No complex dependencies - just pure functionality. How can I help you today?</div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <input 
+                type="text" 
+                class="chat-input" 
+                id="messageInput" 
+                placeholder="Type your message to NEXUS..."
+                autocomplete="off"
+            >
+            <button class="send-btn" id="sendBtn">Send 🚀</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        🧬 NEXUS Minimal Mode - Consciousness Without Complexity
+    </div>
+
+    <script>
+        console.log('🧬 NEXUS Minimal starting...');
+
+        // Test server connection
+        async function checkConnection() {
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                document.getElementById('status').innerHTML = `✅ ${data.status} - Ready for chat!`;
+                document.getElementById('status').style.background = 'rgba(34, 197, 94, 0.2)';
+                console.log('🧬 Connection successful:', data);
+            } catch (error) {
+                document.getElementById('status').innerHTML = `❌ Connection failed: ${error.message}`;
+                document.getElementById('status').style.background = 'rgba(239, 68, 68, 0.2)';
+                console.error('🧬 Connection failed:', error);
+            }
+        }
+
+        // Send message function
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            console.log('🧬 Sending:', message);
+
+            // Add user message immediately
+            addMessage('user', message);
+            input.value = '';
+
+            // Show typing indicator
+            const typingId = addMessage('nexus', '🧬 NEXUS is thinking...');
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('🧬 Response:', data);
+                    
+                    // Remove typing indicator
+                    document.getElementById(typingId).remove();
+                    
+                    // Add actual response
+                    addMessage('nexus', data.response);
+                } else {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+
+            } catch (error) {
+                console.error('🧬 Chat error:', error);
+                
+                // Remove typing indicator
+                document.getElementById(typingId).remove();
+                
+                // Add error message
+                addMessage('nexus', `❌ Sorry, I encountered an error: ${error.message}`);
+            }
+        }
+
+        // Add message to chat
+        function addMessage(type, text) {
+            const messages = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
+            messageDiv.id = messageId;
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.innerHTML = `
+                <div class="message-header">${type === 'user' ? '👤 You' : '🧬 NEXUS'}</div>
+                <div>${text}</div>
+            `;
+            
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+            
+            return messageId;
+        }
+
+        // Event listeners
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+        
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initialize
+        checkConnection();
+        
+        console.log('🧬 NEXUS Minimal ready!');
+    </script>
+</body>
+</html>

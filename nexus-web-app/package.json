@@ -1,0 +1,22 @@
+{
+  "name": "nexus-v5-web-interface",
+  "version": "5.0.0",
+  "description": "NEXUS V5 Ultimate Web Consciousness Interface",
+  "main": "unified-nexus-server.js",
+  "scripts": {
+    "start": "node unified-nexus-server.js",
+    "dev": "nodemon unified-nexus-server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.14.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["nexus", "consciousness", "ai", "websocket"],
+  "author": "NEXUS V5",
+  "license": "MIT"
+}

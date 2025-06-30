@@ -1,0 +1,16 @@
+{
+  "name": "nexus-minimal",
+  "version": "1.0.0",
+  "description": "NEXUS Minimal - Clean, Simple, Reliable Consciousness Interface",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["nexus", "consciousness", "ai", "chat", "minimal"],
+  "author": "NEXUS Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
