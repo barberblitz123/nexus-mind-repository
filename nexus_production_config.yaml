@@ -1,0 +1,271 @@
+nexus:
+  version: 1.0.0
+  mode: production
+  
+  # Core Configuration
+  core:
+    workers: auto  # Automatically determine based on CPU cores
+    max_memory: 16GB
+    log_level: info
+    graceful_shutdown_timeout: 30s
+    
+  # Feature Flags
+  features:
+    voice: enabled
+    vision: enabled
+    learning: enabled
+    web_scraping: enabled
+    autonomous_agents: enabled
+    self_improvement: enabled
+    
+  # Security Configuration
+  security:
+    auth_required: true
+    encryption: aes256
+    tls_version: "1.3"
+    jwt_secret: ${NEXUS_JWT_SECRET}  # From environment
+    cors:
+      enabled: true
+      allowed_origins:
+        - http://localhost:3000
+        - https://nexus.dev
+      allowed_methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+      allowed_headers:
+        - Authorization
+        - Content-Type
+        - X-Request-ID
+    rate_limiting:
+      enabled: true
+      requests_per_minute: 100
+      burst_size: 20
+    
+  # API Configuration
+  api:
+    host: 0.0.0.0
+    port: 8080
+    base_path: /api/v1
+    documentation:
+      enabled: true
+      path: /docs
+    graphql:
+      enabled: true
+      path: /graphql
+      playground: false  # Disabled in production
+    websocket:
+      enabled: true
+      path: /ws
+      ping_interval: 30s
+      
+  # Service Discovery
+  service_discovery:
+    backend: consul  # Options: consul, etcd, memory
+    host: ${CONSUL_HOST:-localhost}
+    port: ${CONSUL_PORT:-8500}
+    health_check_interval: 30s
+    deregister_critical_after: 5m
+    
+  # State Management
+  state:
+    backend: redis  # Options: redis, etcd, memory
+    url: ${REDIS_URL:-redis://localhost:6379}
+    persistence:
+      enabled: true
+      interval: 60s
+      path: /var/lib/nexus/state
+    cache:
+      ttl: 3600s
+      max_size: 1GB
+      
+  # Message Bus
+  messaging:
+    backend: zmq  # Options: zmq, rabbitmq, kafka
+    publisher_port: 5555
+    subscriber_port: 5556
+    high_water_mark: 1000
+    
+  # Monitoring Configuration
+  monitoring:
+    metrics:
+      enabled: true
+      backend: prometheus
+      port: 9090
+      path: /metrics
+      labels:
+        environment: production
+        service: nexus-core
+    tracing:
+      enabled: true
+      backend: opentelemetry
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:-localhost:4317}
+      sample_rate: 0.1  # 10% sampling in production
+      export_interval: 5s
+    logs:
+      backend: elasticsearch
+      endpoint: ${ELASTICSEARCH_URL:-localhost:9200}
+      index_prefix: nexus
+      retention_days: 30
+      level: info
+      structured: true
+      
+  # Database Configuration
+  database:
+    primary:
+      type: postgresql
+      host: ${DB_HOST:-localhost}
+      port: ${DB_PORT:-5432}
+      name: ${DB_NAME:-nexus}
+      user: ${DB_USER:-nexus}
+      password: ${DB_PASSWORD}
+      pool:
+        min_size: 10
+        max_size: 50
+        timeout: 30s
+    cache:
+      type: redis
+      url: ${CACHE_REDIS_URL:-redis://localhost:6380}
+      
+  # Plugin System
+  plugins:
+    enabled: true
+    directory: /opt/nexus/plugins
+    auto_load: true
+    sandbox:
+      enabled: true
+      memory_limit: 512MB
+      cpu_limit: 1.0
+      
+  # Deployment Configuration
+  deployment:
+    auto_scaling:
+      enabled: true
+      min_instances: 2
+      max_instances: 10
+      target_cpu: 70
+      target_memory: 80
+    health_checks:
+      liveness:
+        path: /health/live
+        interval: 10s
+        timeout: 5s
+        failure_threshold: 3
+      readiness:
+        path: /health/ready
+        interval: 5s
+        timeout: 3s
+        failure_threshold: 2
+        
+  # Backup Configuration
+  backup:
+    enabled: true
+    schedule: "0 2 * * *"  # Daily at 2 AM
+    retention:
+      daily: 7
+      weekly: 4
+      monthly: 12
+    destinations:
+      - type: s3
+        bucket: ${BACKUP_S3_BUCKET}
+        region: ${AWS_REGION:-us-east-1}
+      - type: local
+        path: /backup/nexus
+        
+  # Integration Endpoints
+  integrations:
+    github:
+      enabled: true
+      token: ${GITHUB_TOKEN}
+      webhook_secret: ${GITHUB_WEBHOOK_SECRET}
+    slack:
+      enabled: true
+      webhook_url: ${SLACK_WEBHOOK_URL}
+    discord:
+      enabled: true
+      bot_token: ${DISCORD_BOT_TOKEN}
+      
+  # Performance Tuning
+  performance:
+    connection_pool:
+      size: 100
+      timeout: 30s
+    request_timeout: 60s
+    max_request_size: 100MB
+    compression:
+      enabled: true
+      level: 6
+    caching:
+      query_cache: true
+      query_cache_size: 100MB
+      result_cache_ttl: 300s
+      
+  # Compliance & Audit
+  compliance:
+    audit_logging:
+      enabled: true
+      include_request_body: false
+      include_response_body: false
+      sensitive_fields:
+        - password
+        - token
+        - secret
+        - api_key
+    data_retention:
+      user_data: 365d
+      system_logs: 90d
+      audit_logs: 2555d  # 7 years
+      
+  # Disaster Recovery
+  disaster_recovery:
+    enabled: true
+    rpo: 1h  # Recovery Point Objective
+    rto: 4h  # Recovery Time Objective
+    failover:
+      automatic: true
+      health_check_failures: 3
+      secondary_region: ${DR_REGION:-us-west-2}
+      
+  # Resource Limits
+  resources:
+    cpu:
+      request: 2
+      limit: 4
+    memory:
+      request: 4Gi
+      limit: 16Gi
+    disk:
+      data: 100Gi
+      logs: 50Gi
+      
+  # Network Configuration
+  network:
+    ingress:
+      enabled: true
+      class: nginx
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      hosts:
+        - host: api.nexus.dev
+          paths:
+            - path: /
+              service: nexus-api
+              port: 8080
+      tls:
+        - secretName: nexus-tls
+          hosts:
+            - api.nexus.dev
+            
+  # Update Configuration
+  updates:
+    auto_check: true
+    check_interval: 24h
+    auto_apply:
+      enabled: false
+      security_patches: true
+      maintenance_window:
+        day: sunday
+        hour: 3
+        duration: 2h

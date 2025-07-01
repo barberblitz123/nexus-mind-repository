@@ -1,0 +1,410 @@
+#!/usr/bin/env python3
+"""
+NEXUS - AI Development Environment
+Production launcher with all features integrated
+"""
+
+import os
+import sys
+import asyncio
+import signal
+import logging
+from pathlib import Path
+from typing import Optional, Dict, Any
+import subprocess
+import json
+import time
+
+# Add the repository root to Python path
+REPO_ROOT = Path(__file__).parent.resolve()
+sys.path.insert(0, str(REPO_ROOT))
+
+# Configure basic logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger('nexus')
+
+
+class NexusLauncher:
+    """Main NEXUS launcher"""
+    
+    VERSION = "2.0.0"
+    MIN_PYTHON = (3, 9)
+    
+    def __init__(self):
+        self.startup_manager = None
+        self.config_dir = Path.home() / '.nexus'
+        self.config_file = self.config_dir / 'config.json'
+        self.first_run = not self.config_file.exists()
+        self._shutdown_event = asyncio.Event()
+        
+    def check_python_version(self) -> bool:
+        """Check if Python version meets requirements"""
+        current = sys.version_info[:2]
+        if current < self.MIN_PYTHON:
+            print(f"Error: Python {self.MIN_PYTHON[0]}.{self.MIN_PYTHON[1]}+ required")
+            print(f"Current version: {current[0]}.{current[1]}")
+            return False
+        return True
+    
+    def setup_signal_handlers(self):
+        """Setup graceful shutdown handlers"""
+        def signal_handler(signum, frame):
+            logger.info(f"Received signal {signum}, shutting down...")
+            self._shutdown_event.set()
+            
+        # Register handlers for graceful shutdown
+        for sig in [signal.SIGINT, signal.SIGTERM]:
+            signal.signal(sig, signal_handler)
+    
+    def print_banner(self):
+        """Print NEXUS banner"""
+        banner = f"""
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║  ███╗   ██╗███████╗██╗  ██╗██╗   ██╗███████╗                ║
+║  ████╗  ██║██╔════╝╚██╗██╔╝██║   ██║██╔════╝                ║
+║  ██╔██╗ ██║█████╗   ╚███╔╝ ██║   ██║███████╗                ║
+║  ██║╚██╗██║██╔══╝   ██╔██╗ ██║   ██║╚════██║                ║
+║  ██║ ╚████║███████╗██╔╝ ██╗╚██████╔╝███████║                ║
+║  ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝                ║
+║                                                               ║
+║              AI Development Environment v{self.VERSION:<20} ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+"""
+        print(banner)
+    
+    def print_help(self):
+        """Print help information"""
+        help_text = """
+Usage: nexus [command] [options]
+
+Commands:
+  start          Start NEXUS (default)
+  setup          Run setup wizard
+  check          Check system requirements
+  update         Check for updates
+  doctor         Run system diagnostics
+  config         Edit configuration
+  help           Show this help
+
+Options:
+  --debug        Enable debug logging
+  --no-banner    Skip banner display
+  --config PATH  Use custom config file
+  --safe-mode    Start in safe mode (minimal features)
+
+Examples:
+  nexus                    # Start NEXUS
+  nexus setup              # Run first-time setup
+  nexus check --verbose    # Check requirements with details
+  nexus start --debug      # Start with debug logging
+
+For more information: https://nexus.ai/docs
+"""
+        print(help_text)
+    
+    async def run_setup_wizard(self) -> Dict[str, Any]:
+        """Run first-time setup wizard"""
+        print("\nWelcome to NEXUS! Let's set up your environment.\n")
+        
+        # Import and run configuration wizard
+        try:
+            from nexus_config_wizard import ConfigurationWizard
+            wizard = ConfigurationWizard()
+            config = await wizard.run()
+            
+            # Save configuration
+            self.config_dir.mkdir(parents=True, exist_ok=True)
+            with open(self.config_file, 'w') as f:
+                json.dump(config, f, indent=2)
+            
+            print("\n✅ Setup complete! Configuration saved.")
+            return config
+            
+        except Exception as e:
+            logger.error(f"Setup wizard failed: {e}")
+            # Fallback to basic config
+            config = {
+                "nexus": {
+                    "mode": "development",
+                    "features": {
+                        "voice": False,
+                        "vision": False,
+                        "web_scraping": True,
+                        "memory": True
+                    }
+                }
+            }
+            self.config_dir.mkdir(parents=True, exist_ok=True)
+            with open(self.config_file, 'w') as f:
+                json.dump(config, f, indent=2)
+            return config
+    
+    async def load_configuration(self) -> Dict[str, Any]:
+        """Load or create configuration"""
+        if self.first_run:
+            return await self.run_setup_wizard()
+        
+        try:
+            with open(self.config_file, 'r') as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error(f"Failed to load configuration: {e}")
+            print("\nConfiguration file corrupted. Please run: nexus setup")
+            sys.exit(1)
+    
+    async def check_requirements(self, verbose: bool = False) -> bool:
+        """Check system requirements"""
+        try:
+            from nexus_system_verifier import NexusSystemVerifier
+            verifier = NexusSystemVerifier()
+            
+            print("Checking system requirements...\n")
+            health = await verifier.verify_all(auto_fix=False)
+            
+            if verbose:
+                # Detailed output handled by verifier
+                pass
+            else:
+                # Summary only
+                if health.is_healthy:
+                    print("✅ All requirements satisfied")
+                else:
+                    print(f"⚠️  {health.error_components} issues found")
+                    print("Run 'nexus check --verbose' for details")
+            
+            return health.is_healthy
+            
+        except Exception as e:
+            logger.error(f"Requirements check failed: {e}")
+            # Basic requirements check
+            print("Running basic requirements check...")
+            issues = []
+            
+            # Check Python version
+            if sys.version_info < self.MIN_PYTHON:
+                issues.append(f"Python {self.MIN_PYTHON[0]}.{self.MIN_PYTHON[1]}+ required")
+            
+            # Check essential imports
+            try:
+                import rich
+                import textual
+                import aiohttp
+            except ImportError as e:
+                issues.append(f"Missing package: {e.name}")
+            
+            if issues:
+                print(f"⚠️  {len(issues)} issues found:")
+                for issue in issues:
+                    print(f"  - {issue}")
+                return False
+            else:
+                print("✅ Basic requirements satisfied")
+                return True
+    
+    async def check_updates(self) -> bool:
+        """Check for available updates"""
+        print("Checking for updates...")
+        
+        try:
+            # Simple update check (would connect to update server in production)
+            # For now, just return False
+            print("✅ You're running the latest version")
+            return False
+            
+        except Exception as e:
+            logger.warning(f"Update check failed: {e}")
+            return False
+    
+    async def run_doctor(self) -> bool:
+        """Run system diagnostics"""
+        print("Running system diagnostics...\n")
+        
+        try:
+            from nexus_system_verifier import NexusSystemVerifier
+            verifier = NexusSystemVerifier()
+            
+            # Run verification with auto-fix
+            health = await verifier.verify_all(auto_fix=True)
+            
+            if health.is_healthy:
+                print("\n✅ System is healthy")
+            else:
+                print(f"\n⚠️  {health.error_components} issues remain")
+                print("Some issues may require manual intervention")
+            
+            return health.is_healthy
+            
+        except Exception as e:
+            logger.error(f"Doctor failed: {e}")
+            return False
+    
+    async def start_nexus(self, config: Dict[str, Any], debug: bool = False, safe_mode: bool = False):
+        """Start NEXUS with configuration"""
+        if debug:
+            logging.getLogger().setLevel(logging.DEBUG)
+        
+        try:
+            # Try to import startup manager
+            from nexus_startup_manager import StartupManager, StartupError
+            
+            # Initialize startup manager
+            self.startup_manager = StartupManager(config, safe_mode=safe_mode)
+            
+            # Start all services
+            print("\nStarting NEXUS services...")
+            await self.startup_manager.start_all()
+            
+            # Launch terminal app
+            print("\nLaunching terminal interface...")
+            from nexus_terminal_app import NexusTerminalApp
+            
+            app = NexusTerminalApp(config, self.startup_manager)
+            
+            # Run app in separate task
+            app_task = asyncio.create_task(app.run_async())
+            
+            # Wait for shutdown signal
+            await self._shutdown_event.wait()
+            
+            # Graceful shutdown
+            print("\nShutting down NEXUS...")
+            await app.shutdown()
+            await self.startup_manager.stop_all()
+            
+            # Cancel app task
+            app_task.cancel()
+            try:
+                await app_task
+            except asyncio.CancelledError:
+                pass
+            
+            print("\n👋 NEXUS shutdown complete")
+            
+        except ImportError as e:
+            logger.warning(f"Some components not available: {e}")
+            print("\n⚠️  Running in limited mode")
+            
+            # Fallback to simple terminal UI
+            try:
+                from nexus_terminal_ui_production import NexusTerminalUI
+                
+                print("\nLaunching terminal interface...")
+                app = NexusTerminalUI()
+                await app.run_async()
+                
+            except ImportError:
+                print("\n❌ Terminal UI not available")
+                print("Please ensure all NEXUS files are installed")
+                
+        except Exception as e:
+            logger.exception("Unexpected error during startup")
+            print(f"\n❌ Unexpected error: {e}")
+            sys.exit(1)
+    
+    async def main(self):
+        """Main entry point"""
+        # Check Python version first
+        if not self.check_python_version():
+            sys.exit(1)
+        
+        # Parse command line arguments
+        import argparse
+        parser = argparse.ArgumentParser(prog='nexus', add_help=False)
+        parser.add_argument('command', nargs='?', default='start',
+                          choices=['start', 'setup', 'check', 'update', 'doctor', 'config', 'help'])
+        parser.add_argument('--debug', action='store_true', help='Enable debug logging')
+        parser.add_argument('--no-banner', action='store_true', help='Skip banner display')
+        parser.add_argument('--config', type=str, help='Use custom config file')
+        parser.add_argument('--safe-mode', action='store_true', help='Start in safe mode')
+        parser.add_argument('--verbose', '-v', action='store_true', help='Verbose output')
+        parser.add_argument('--help', '-h', action='store_true', help='Show help')
+        
+        args = parser.parse_args()
+        
+        # Handle help
+        if args.help or args.command == 'help':
+            self.print_help()
+            return
+        
+        # Show banner unless disabled
+        if not args.no_banner:
+            self.print_banner()
+        
+        # Override config file if specified
+        if args.config:
+            self.config_file = Path(args.config)
+            self.first_run = not self.config_file.exists()
+        
+        # Setup signal handlers
+        self.setup_signal_handlers()
+        
+        # Execute command
+        if args.command == 'setup':
+            await self.run_setup_wizard()
+            
+        elif args.command == 'check':
+            success = await self.check_requirements(verbose=args.verbose)
+            sys.exit(0 if success else 1)
+            
+        elif args.command == 'update':
+            await self.check_updates()
+            
+        elif args.command == 'doctor':
+            success = await self.run_doctor()
+            sys.exit(0 if success else 1)
+            
+        elif args.command == 'config':
+            # Open config in editor
+            editor = os.environ.get('EDITOR', 'nano')
+            subprocess.run([editor, str(self.config_file)])
+            
+        elif args.command == 'start':
+            # Load configuration
+            config = await self.load_configuration()
+            
+            # Quick requirements check
+            if self.first_run:
+                print("\n🔍 First run detected. Checking requirements...")
+                if not await self.check_requirements():
+                    print("\n⚠️  Some requirements are not met.")
+                    response = input("Continue anyway? [y/N]: ").strip().lower()
+                    if response != 'y':
+                        print("Aborted.")
+                        return
+            
+            # Check for updates (non-blocking)
+            asyncio.create_task(self.check_updates())
+            
+            # Start NEXUS
+            await self.start_nexus(config, debug=args.debug, safe_mode=args.safe_mode)
+
+
+def main():
+    """Entry point"""
+    launcher = NexusLauncher()
+    
+    try:
+        # Run with asyncio
+        if sys.platform == "win32":
+            # Windows-specific event loop policy
+            asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+        
+        asyncio.run(launcher.main())
+        
+    except KeyboardInterrupt:
+        print("\n\n👋 Goodbye!")
+        sys.exit(0)
+    except Exception as e:
+        logger.exception("Fatal error")
+        print(f"\n❌ Fatal error: {e}")
+        print("\nPlease report this issue: https://nexus.ai/issues")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

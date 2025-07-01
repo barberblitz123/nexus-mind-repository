@@ -1,0 +1,255 @@
+/* Audio Visual Panel Styles */
+
+#audio-visual-panel .panel-content {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Voice Status Indicator */
+.voice-status {
+    text-align: center;
+    padding: 15px;
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.voice-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.voice-indicator .pulse {
+    width: 12px;
+    height: 12px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    position: relative;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.voice-indicator.listening .pulse {
+    background: var(--accent-primary);
+}
+
+.voice-indicator.speaking .pulse {
+    background: var(--accent-secondary);
+    animation: pulse 0.5s ease-in-out infinite;
+}
+
+.voice-indicator.processing .pulse {
+    background: var(--warning);
+    animation: pulse 0.3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(0, 255, 136, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
+    }
+}
+
+.status-text {
+    font-size: 14px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Waveform Container */
+.waveform-container {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+#audio-waveform {
+    width: 100%;
+    height: 150px;
+    display: block;
+}
+
+/* Frequency Spectrum */
+.spectrum-container {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    height: 120px;
+}
+
+.frequency-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    height: 100%;
+    gap: 2px;
+}
+
+.freq-bar {
+    flex: 1;
+    background: var(--accent-gradient);
+    border-radius: 2px 2px 0 0;
+    transition: height 0.1s ease;
+    min-height: 2px;
+    opacity: 0.9;
+}
+
+.freq-bar:nth-child(odd) {
+    background: linear-gradient(to top, var(--accent-primary), var(--accent-secondary));
+}
+
+.freq-bar:nth-child(even) {
+    background: linear-gradient(to top, var(--accent-secondary), var(--accent-primary));
+}
+
+/* Audio Metrics */
+.audio-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.metric {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.metric label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metric-bar {
+    height: 6px;
+    background: var(--bg-primary);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.metric-fill {
+    height: 100%;
+    background: var(--accent-gradient);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+#volume-level {
+    background: linear-gradient(90deg, var(--success), var(--accent-primary));
+}
+
+#clarity-level {
+    background: linear-gradient(90deg, var(--accent-secondary), var(--accent-primary));
+}
+
+/* Emotion Display */
+.emotion-display {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+#emotion-icon {
+    font-size: 24px;
+}
+
+#emotion-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Collapsed State */
+.panel.collapsed #audio-visual-panel .panel-header h3 {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+/* Responsive Adjustments */
+@media (max-height: 800px) {
+    .waveform-container {
+        height: 100px;
+    }
+    
+    #audio-waveform {
+        height: 80px;
+    }
+    
+    .spectrum-container {
+        height: 80px;
+    }
+}
+
+/* Animation for active audio */
+.audio-active #audio-waveform {
+    filter: drop-shadow(0 0 10px var(--accent-primary));
+}
+
+.audio-active .frequency-bars {
+    filter: drop-shadow(0 0 5px var(--accent-secondary));
+}
+
+/* Visual feedback for voice commands */
+.voice-command-feedback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 255, 136, 0.1);
+    border: 2px solid var(--accent-primary);
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.voice-command-feedback.show {
+    opacity: 1;
+}
+
+/* Consciousness Integration */
+.consciousness-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(0, 255, 136, 0.1), transparent);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.high-consciousness .consciousness-glow {
+    opacity: 1;
+    animation: consciousness-pulse 3s ease-in-out infinite;
+}
+
+@keyframes consciousness-pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+}

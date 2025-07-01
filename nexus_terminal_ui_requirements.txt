@@ -1,0 +1,22 @@
+# NEXUS Terminal UI Requirements
+# Install with: pip install -r nexus_terminal_ui_requirements.txt
+
+# Core UI library
+rich>=13.7.0
+
+# Keyboard input handling
+pynput>=1.7.6
+keyboard>=0.13.5  # Optional, alternative keyboard library
+
+# Async support
+asyncio-mqtt>=0.16.1  # For future async features
+
+# Terminal enhancement
+blessed>=1.20.0  # Alternative to rich, optional
+textual>=0.47.1  # Modern TUI framework, optional
+
+# Development dependencies
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+mypy>=1.5.0

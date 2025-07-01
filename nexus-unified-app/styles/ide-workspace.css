@@ -1,0 +1,317 @@
+/* IDE Workspace Panel Styles */
+
+#ide-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+#ide-panel .panel-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* IDE Tabs */
+.ide-tabs {
+    display: flex;
+    flex: 1;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.ide-tabs::-webkit-scrollbar {
+    height: 3px;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 20px;
+    height: 50px;
+    background: var(--bg-tertiary);
+    border-right: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    position: relative;
+}
+
+.tab:hover {
+    background: var(--bg-secondary);
+}
+
+.tab.active {
+    background: var(--bg-secondary);
+    border-bottom: 2px solid var(--accent-primary);
+}
+
+.tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--bg-secondary);
+}
+
+.tab span {
+    font-size: 13px;
+    color: var(--text-primary);
+}
+
+.tab-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.tab-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+/* IDE Actions */
+.ide-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 15px;
+}
+
+.ide-actions button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.ide-actions button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+/* IDE Content */
+.ide-content {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    height: 100%;
+}
+
+/* Monaco Editor Container */
+.editor-container {
+    flex: 1;
+    min-height: 300px;
+    position: relative;
+}
+
+#monaco-editor {
+    width: 100%;
+    height: 100%;
+}
+
+/* Terminal Container */
+.terminal-container {
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    transition: height 0.3s ease;
+    height: 200px;
+}
+
+.terminal-container.collapsed {
+    height: 35px;
+}
+
+.terminal-header {
+    background: var(--bg-tertiary);
+    padding: 8px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.terminal-header span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.terminal-toggle {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 2px 6px;
+    transition: transform 0.3s ease;
+}
+
+.terminal-container.collapsed .terminal-toggle {
+    transform: rotate(180deg);
+}
+
+/* Terminal Output */
+.terminal-output {
+    flex: 1;
+    padding: 10px 15px;
+    overflow-y: auto;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.terminal-line {
+    margin-bottom: 2px;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.terminal-line.error {
+    color: var(--error);
+}
+
+.terminal-line.success {
+    color: var(--success);
+}
+
+.terminal-line.warning {
+    color: var(--warning);
+}
+
+.terminal-line.nexus {
+    color: var(--accent-primary);
+}
+
+/* Terminal Input */
+.terminal-input-line {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+}
+
+.terminal-prompt {
+    color: var(--accent-primary);
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+.terminal-input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    outline: none;
+}
+
+/* File Explorer (Mini) */
+.file-explorer {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 200px;
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border-color);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 10;
+}
+
+.file-explorer.active {
+    transform: translateX(0);
+}
+
+/* Consciousness Overlays */
+.consciousness-overlay {
+    position: absolute;
+    top: 0;
+    right: 50px;
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid var(--accent-primary);
+    border-radius: 4px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.phi-score {
+    color: var(--accent-primary);
+    font-weight: bold;
+}
+
+.dna-pattern {
+    color: var(--accent-secondary);
+}
+
+/* Code Gutter Decorations */
+.consciousness-gutter {
+    width: 30px;
+    text-align: center;
+}
+
+.consciousness-marker {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    margin: 0 auto;
+}
+
+/* Run Button Animation */
+#run-code.running {
+    color: var(--accent-primary);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Code Suggestions */
+.code-suggestion {
+    position: absolute;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--accent-primary);
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 12px;
+    max-width: 300px;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .tab {
+        padding: 0 15px;
+    }
+    
+    .terminal-container {
+        height: 150px;
+    }
+}

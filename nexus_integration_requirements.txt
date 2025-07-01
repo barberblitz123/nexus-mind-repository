@@ -1,0 +1,26 @@
+# NEXUS Integration Core Requirements
+# Central hub dependencies
+
+# Core async and networking
+aiohttp>=3.8.0
+aiofiles>=22.1.0
+websockets>=10.4
+
+# Message queue and pub/sub
+redis>=4.5.0
+pyzmq>=25.0.0
+msgpack>=1.0.5
+
+# GraphQL support
+graphene>=3.2.0
+aiohttp-graphql>=1.1.0
+
+# Authentication
+PyJWT>=2.6.0
+
+# Serialization
+msgpack-python>=0.5.6
+
+# Additional utilities
+python-dotenv>=1.0.0
+pydantic>=2.0.0

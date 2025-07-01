@@ -1,0 +1,52 @@
+{
+    "working_memory": {
+        "max_size_mb": 512,
+        "ttl_seconds": 3600,
+        "eviction_policy": "lru",
+        "cleanup_interval": 300
+    },
+    "episodic_memory": {
+        "db_path": "./nexus_episodic.db",
+        "max_episodes": 100000,
+        "consolidation_interval": 3600,
+        "pruning_threshold": 0.9,
+        "emotion_tracking": true
+    },
+    "semantic_memory": {
+        "chromadb_path": "./nexus_vectors",
+        "use_existing": true,
+        "embedding_model": "all-MiniLM-L6-v2",
+        "collections": [
+            "nexus_conversations",
+            "nexus_consciousness"
+        ],
+        "consciousness_boost": 1.5
+    },
+    "mem0": {
+        "storage_path": "./nexus_mem0",
+        "encryption": true,
+        "compression": "zstd",
+        "block_size_kb": 64,
+        "redundancy": 2,
+        "versioning": true,
+        "max_versions": 10
+    },
+    "consolidation": {
+        "to_episodic": 0.3,
+        "to_semantic": 0.6,
+        "to_persistent": 0.8,
+        "auto_consolidate": true,
+        "interval_seconds": 300
+    },
+    "manus_integration": {
+        "enabled": true,
+        "task_importance_boost": {
+            "critical": 0.3,
+            "high": 0.2,
+            "medium": 0.1,
+            "low": 0.0
+        },
+        "error_importance_boost": 0.2,
+        "success_importance_boost": 0.1
+    }
+}
