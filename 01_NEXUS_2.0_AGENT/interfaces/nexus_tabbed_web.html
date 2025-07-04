@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS 2.0 - Tabbed Interface (Web)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background: #2a2a2a;
+            padding: 10px 20px;
+            border-bottom: 2px solid #00ff00;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            color: #00ff00;
+        }
+        
+        .header .status {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        /* Tab Navigation */
+        .tab-nav {
+            background: #252525;
+            display: flex;
+            border-bottom: 1px solid #444;
+        }
+        
+        .tab-button {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .tab-button:hover {
+            color: #00ff00;
+            background: #333;
+        }
+        
+        .tab-button.active {
+            color: #00ff00;
+            background: #1a1a1a;
+            border-bottom: 2px solid #00ff00;
+        }
+        
+        .tab-button kbd {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-left: 8px;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            height: calc(100vh - 120px);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .tab-panel {
+            display: none;
+            height: 100%;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .tab-panel.active {
+            display: block;
+        }
+        
+        /* Stage Manager Tab */
+        .stage-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            height: 100%;
+        }
+        
+        .active-stage, .side-stage {
+            border: 2px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .active-stage {
+            border-color: #00ff00;
+        }
+        
+        .agent-window {
+            background: #2a2a2a;
+            border: 1px solid #555;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        
+        .agent-window.focused {
+            border-color: #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        .agent-window h3 {
+            color: #00ff00;
+            margin-bottom: 10px;
+        }
+        
+        .agent-info {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .agent-state {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .state-working { background: #ff6b00; color: #000; }
+        .state-thinking { background: #ffeb3b; color: #000; }
+        .state-idle { background: #4caf50; color: #000; }
+        .state-error { background: #f44336; color: #fff; }
+        
+        /* Chat Tab */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            background: #2a2a2a;
+            border: 2px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #333;
+            border-radius: 6px;
+        }
+        
+        .chat-message.user {
+            background: #1a4d1a;
+            border-left: 3px solid #00ff00;
+        }
+        
+        .chat-message.agent {
+            background: #333;
+            border-left: 3px solid #ff6b00;
+        }
+        
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 15px;
+            background: #2a2a2a;
+            border: 2px solid #444;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: #00ff00;
+        }
+        
+        /* Preview Tab */
+        .preview-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .preview-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .preview-content {
+            flex: 1;
+            background: #2a2a2a;
+            border: 2px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            overflow: auto;
+            font-family: 'Consolas', monospace;
+        }
+        
+        .code-preview {
+            white-space: pre;
+            line-height: 1.5;
+        }
+        
+        /* Terminal Tab */
+        .terminal-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .terminal-output {
+            flex: 1;
+            background: #000;
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            font-family: 'Consolas', monospace;
+            color: #00ff00;
+            margin-bottom: 20px;
+        }
+        
+        .terminal-line {
+            margin-bottom: 5px;
+        }
+        
+        .terminal-input-area {
+            display: flex;
+            align-items: center;
+            background: #000;
+            border: 2px solid #00ff00;
+            border-radius: 6px;
+            padding: 10px;
+        }
+        
+        .terminal-prompt {
+            color: #00ff00;
+            margin-right: 10px;
+        }
+        
+        .terminal-input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #00ff00;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        /* Status Tab */
+        .status-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            height: 100%;
+        }
+        
+        .status-panel {
+            background: #2a2a2a;
+            border: 2px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .status-panel h3 {
+            color: #00ff00;
+            margin-bottom: 15px;
+        }
+        
+        .agent-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .agent-table th, .agent-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+        
+        .agent-table th {
+            color: #00ff00;
+            font-weight: bold;
+        }
+        
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: #00ff00;
+            border: none;
+            border-radius: 6px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #00cc00;
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>🧬 NEXUS 2.0</h1>
+        <div class="status">
+            <span>Agents: <span id="agent-count">0</span></span>
+            <span>Status: <span id="system-status">Ready</span></span>
+            <span id="clock"></span>
+        </div>
+    </div>
+    
+    <!-- Tab Navigation -->
+    <div class="tab-nav">
+        <button class="tab-button active" onclick="switchTab('stage')">
+            🎭 Stage Manager <kbd>Ctrl+1</kbd>
+        </button>
+        <button class="tab-button" onclick="switchTab('chat')">
+            💬 Chat <kbd>Ctrl+2</kbd>
+        </button>
+        <button class="tab-button" onclick="switchTab('preview')">
+            👁️ Preview <kbd>Ctrl+3</kbd>
+        </button>
+        <button class="tab-button" onclick="switchTab('terminal')">
+            🖥️ Terminal <kbd>Ctrl+4</kbd>
+        </button>
+        <button class="tab-button" onclick="switchTab('status')">
+            📊 Status <kbd>Ctrl+5</kbd>
+        </button>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- Stage Manager Tab -->
+        <div id="stage-tab" class="tab-panel active">
+            <div class="stage-container">
+                <div class="active-stage">
+                    <h2>Active Agents (Focus)</h2>
+                    <div id="active-agents"></div>
+                </div>
+                <div class="side-stage">
+                    <h2>Background Agents</h2>
+                    <div id="side-agents"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Tab -->
+        <div id="chat-tab" class="tab-panel">
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages"></div>
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="chat-input" 
+                           placeholder="Type a command or message..." 
+                           onkeypress="handleChatInput(event)">
+                    <button onclick="sendChatMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Preview Tab -->
+        <div id="preview-tab" class="tab-panel">
+            <div class="preview-container">
+                <div class="preview-selector">
+                    <button onclick="setPreviewType('code')">Code</button>
+                    <button onclick="setPreviewType('output')">Output</button>
+                    <button onclick="setPreviewType('logs')">Logs</button>
+                    <button onclick="setPreviewType('data')">Data</button>
+                </div>
+                <div class="preview-content" id="preview-content">
+                    <pre class="code-preview">Select a preview type above...</pre>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Terminal Tab -->
+        <div id="terminal-tab" class="tab-panel">
+            <div class="terminal-container">
+                <div class="terminal-output" id="terminal-output"></div>
+                <div class="terminal-input-area">
+                    <span class="terminal-prompt">$</span>
+                    <input type="text" class="terminal-input" id="terminal-input" 
+                           onkeypress="handleTerminalInput(event)">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Status Tab -->
+        <div id="status-tab" class="tab-panel">
+            <div class="status-container">
+                <div class="status-panel">
+                    <h3>Agent Status</h3>
+                    <table class="agent-table" id="agent-table">
+                        <thead>
+                            <tr>
+                                <th>Agent</th>
+                                <th>Type</th>
+                                <th>State</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody id="agent-table-body"></tbody>
+                    </table>
+                </div>
+                <div class="status-panel">
+                    <h3>System Metrics</h3>
+                    <div id="system-metrics">
+                        <p>Active Agents: <span id="active-count">0</span></p>
+                        <p>Background Agents: <span id="background-count">0</span></p>
+                        <p>Total Memory: <span id="memory-usage">0 MB</span></p>
+                        <p>CPU Usage: <span id="cpu-usage">0%</span></p>
+                    </div>
+                    <h3 style="margin-top: 20px;">Activity Log</h3>
+                    <div id="activity-log"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Controls -->
+    <div class="controls">
+        <button onclick="createNewAgent()">New Agent (Ctrl+N)</button>
+    </div>
+    
+    <script src="nexus_tabbed_web.js"></script>
+</body>
+</html>

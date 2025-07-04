@@ -1,0 +1,66 @@
+[2025-07-03 13:04:31] [INFO] ============================================================
+[2025-07-03 13:04:31] [INFO] NEXUS 2.0 SYSTEM DIAGNOSTIC REPORT
+[2025-07-03 13:04:31] [INFO] ============================================================
+[2025-07-03 13:04:31] [INFO] 
+📁 Checking Core Files:
+[2025-07-03 13:04:31] [INFO] ✅ nexus_stage_manager.py - FOUND (Manages agent windows)
+[2025-07-03 13:04:31] [INFO] ✅ nexus_desktop_manager.py - FOUND (Chat and preview interface)
+[2025-07-03 13:04:31] [INFO] ✅ nexus_task_orchestrator.py - FOUND (Connects chat to agents)
+[2025-07-03 13:04:31] [INFO] ✅ nexus_autonomous_agent.py - FOUND (Self-directed AI agent)
+[2025-07-03 13:04:31] [INFO] ✅ nexus_agent_orchestrator_advanced.py - FOUND (Multi-agent management)
+[2025-07-03 13:04:31] [INFO] ✅ nexus_tabbed_interface.py - FOUND (5-tab terminal interface)
+[2025-07-03 13:04:31] [INFO] ✅ nexus_integrated_workspace.py - FOUND (Original full UI)
+[2025-07-03 13:04:31] [INFO] ✅ nexus_simple_demo.py - FOUND (Demo without bugs)
+[2025-07-03 13:04:31] [ERROR] ❌ nexus_terminal_ui_advanced.py - MISSING (VS Code-like terminal)
+[2025-07-03 13:04:31] [ERROR] ❌ nexus_terminal_app.py - MISSING (Simple terminal UI)
+[2025-07-03 13:04:31] [ERROR] ❌ nexus_integrated_terminal.py - MISSING (Terminal session management)
+[2025-07-03 13:04:31] [INFO] 
+📦 Checking Module Imports:
+[2025-07-03 13:04:31] [ERROR] ❌ nexus_stage_manager - IMPORT ERROR: cannot import name 'ScrollView' from 'textual.widgets' (/usr/local/python/3.12.1/lib/python3.12/site-packages/textual/widgets/__init__.py)
+[2025-07-03 13:04:32] [INFO] ✅ nexus_desktop_manager.DesktopManager - IMPORTABLE
+[2025-07-03 13:04:32] [ERROR] ❌ nexus_task_orchestrator - IMPORT ERROR: cannot import name 'ScrollView' from 'textual.widgets' (/usr/local/python/3.12.1/lib/python3.12/site-packages/textual/widgets/__init__.py)
+[2025-07-03 13:04:32] [INFO] ✅ nexus_autonomous_agent.AutonomousMANUS - IMPORTABLE
+[2025-07-03 13:04:32] [ERROR] ❌ nexus_agent_orchestrator_advanced - IMPORT ERROR: cannot import name 'ScrollView' from 'textual.widgets' (/usr/local/python/3.12.1/lib/python3.12/site-packages/textual/widgets/__init__.py)
+[2025-07-03 13:04:32] [INFO] 
+📚 Checking Dependencies:
+[2025-07-03 13:04:32] [INFO] ✅ textual - INSTALLED (Terminal UI framework)
+[2025-07-03 13:04:32] [INFO] ✅ rich - INSTALLED (Terminal formatting)
+[2025-07-03 13:04:32] [INFO] ✅ psutil - INSTALLED (System monitoring)
+[2025-07-03 13:04:32] [INFO] ✅ aiofiles - INSTALLED (Async file operations)
+[2025-07-03 13:04:32] [INFO] ✅ websockets - INSTALLED (WebSocket support)
+[2025-07-03 13:04:32] [INFO] 
+🌐 Checking Web Interface:
+[2025-07-03 13:04:32] [INFO] ✅ ../interfaces/nexus_tabbed_web.html - FOUND (Web UI HTML)
+[2025-07-03 13:04:32] [INFO] ✅ ../interfaces/nexus_tabbed_web.js - FOUND (Web UI JavaScript)
+[2025-07-03 13:04:32] [INFO] ✅ ../interfaces/nexus_websocket_server.py - FOUND (WebSocket server)
+[2025-07-03 13:04:32] [INFO] ✅ ../interfaces/launch_web_interface.sh - FOUND (Web launcher script)
+[2025-07-03 13:04:32] [INFO] 
+============================================================
+[2025-07-03 13:04:32] [INFO] DIAGNOSTIC SUMMARY
+[2025-07-03 13:04:32] [INFO] ============================================================
+[2025-07-03 13:04:32] [INFO] 
+📊 Core Files Status:
+[2025-07-03 13:04:32] [INFO]   Total Expected: 11
+[2025-07-03 13:04:32] [INFO]   Found: 8
+[2025-07-03 13:04:32] [INFO]   Missing: 3
+[2025-07-03 13:04:32] [INFO] 
+❌ Missing Critical Files:
+[2025-07-03 13:04:32] [INFO]   - nexus_terminal_ui_advanced.py: VS Code-like terminal
+[2025-07-03 13:04:32] [INFO]   - nexus_terminal_app.py: Simple terminal UI
+[2025-07-03 13:04:32] [INFO]   - nexus_integrated_terminal.py: Terminal session management
+[2025-07-03 13:04:32] [INFO] 
+❌ Import Errors:
+[2025-07-03 13:04:32] [INFO]   - nexus_stage_manager: cannot import name 'ScrollView' from 'textual.widgets' (/usr/local/python/3.12.1/lib/python3.12/site-packages/textual/widgets/__init__.py)
+[2025-07-03 13:04:32] [INFO]   - nexus_task_orchestrator: cannot import name 'ScrollView' from 'textual.widgets' (/usr/local/python/3.12.1/lib/python3.12/site-packages/textual/widgets/__init__.py)
+[2025-07-03 13:04:32] [INFO]   - nexus_agent_orchestrator_advanced: cannot import name 'ScrollView' from 'textual.widgets' (/usr/local/python/3.12.1/lib/python3.12/site-packages/textual/widgets/__init__.py)
+[2025-07-03 13:04:32] [INFO] 
+⚠️  SYSTEM STATUS: PARTIALLY FUNCTIONAL
+[2025-07-03 13:04:32] [INFO] 
+🔧 Generating Fix Commands:
+[2025-07-03 13:04:32] [INFO] Run these commands to restore missing files:
+[2025-07-03 13:04:32] [INFO]   # Create nexus_terminal_ui_advanced.py
+[2025-07-03 13:04:32] [INFO]   touch nexus_terminal_ui_advanced.py
+[2025-07-03 13:04:32] [INFO]   # Create nexus_terminal_app.py
+[2025-07-03 13:04:32] [INFO]   touch nexus_terminal_app.py
+[2025-07-03 13:04:32] [INFO]   # Create nexus_integrated_terminal.py
+[2025-07-03 13:04:32] [INFO]   touch nexus_integrated_terminal.py

@@ -1,0 +1,69 @@
+{
+  "app_name": "NEXUS Stage + Desktop Manager",
+  "version": "1.0.0",
+  "type": "terminal_application",
+  "description": "Standalone terminal app for managing multiple AI agents with Stage Manager and Desktop Manager interfaces",
+  "author": "NEXUS Team",
+  "created": "2025-07-02",
+  
+  "components": {
+    "stage_manager": {
+      "file": "core/nexus_stage_manager.py",
+      "description": "Manages multiple agent windows like macOS Stage Manager",
+      "version": "1.0.0"
+    },
+    "desktop_manager": {
+      "file": "core/nexus_desktop_manager.py",
+      "description": "Chat interface and preview pane management",
+      "version": "1.0.0"
+    },
+    "integrated_workspace": {
+      "file": "core/nexus_integrated_workspace.py",
+      "description": "Complete terminal UI combining Stage + Desktop managers",
+      "version": "1.0.0"
+    },
+    "task_orchestrator": {
+      "file": "core/nexus_task_orchestrator.py",
+      "description": "Automatically creates agents from user commands",
+      "version": "1.0.0"
+    }
+  },
+  
+  "entry_points": {
+    "main": "launch_interconnected_demo.py",
+    "full_ui": "core/nexus_integrated_workspace.py",
+    "stage_only": "core/nexus_stage_manager.py",
+    "desktop_only": "core/nexus_desktop_manager.py"
+  },
+  
+  "dependencies": {
+    "python": ">=3.8",
+    "textual": ">=0.40.0",
+    "rich": ">=13.0.0",
+    "psutil": ">=5.9.0",
+    "aiofiles": ">=23.0.0"
+  },
+  
+  "features": [
+    "Multiple AI agent windows",
+    "Real-time agent collaboration",
+    "Chat-based control interface",
+    "Preview panes for code/output",
+    "Task automation",
+    "Workspace persistence",
+    "Keyboard shortcuts",
+    "Terminal-based UI",
+    "No web browser required"
+  ],
+  
+  "standalone": true,
+  "requires_other_nexus_components": false,
+  
+  "directories": {
+    "core": "Core application logic",
+    "docs": "Documentation and guides",
+    "configs": "User configuration files",
+    "scripts": "Helper and utility scripts",
+    "tests": "Test suite"
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "visual_processor": {
+    "yolo_model": "yolov5s",
+    "confidence_threshold": 0.5,
+    "nms_threshold": 0.4,
+    "max_faces": 10,
+    "emotion_model": "deepface",
+    "enable_pose": true,
+    "frame_skip": 2,
+    "buffer_size": 30,
+    "consciousness_weights": {
+      "complexity": 0.20,
+      "diversity": 0.15,
+      "faces": 0.20,
+      "emotion": 0.15,
+      "motion": 0.10,
+      "color": 0.10,
+      "spatial": 0.05,
+      "temporal": 0.05
+    },
+    "performance": {
+      "max_resolution": [1920, 1080],
+      "target_fps": 30,
+      "enable_gpu": true,
+      "batch_size": 4
+    }
+  },
+  
+  "auditory_processor": {
+    "sample_rate": 16000,
+    "chunk_size": 1024,
+    "hop_length": 512,
+    "n_mfcc": 13,
+    "n_mels": 128,
+    "vad_aggressiveness": 2,
+    "emotion_model": "wav2vec2",
+    "enable_music_analysis": true,
+    "enable_speech_recognition": true,
+    "buffer_duration": 5.0,
+    "consciousness_weights": {
+      "emotion": 0.20,
+      "voice": 0.15,
+      "music": 0.15,
+      "harmonic": 0.15,
+      "rhythmic": 0.10,
+      "spectral": 0.10,
+      "temporal": 0.10,
+      "semantic": 0.05
+    },
+    "performance": {
+      "enable_gpu": true,
+      "max_concurrent_streams": 4,
+      "audio_format": "float32"
+    },
+    "voice_biometric": {
+      "enrollment_duration": 10.0,
+      "authentication_threshold": 0.85,
+      "max_stored_profiles": 100
+    }
+  },
+  
+  "model_loader": {
+    "max_cache_size_gb": 10,
+    "auto_download": true,
+    "prefer_quantized": false,
+    "max_concurrent_downloads": 3,
+    "download_timeout": 3600,
+    "model_sources": {
+      "huggingface": "https://huggingface.co",
+      "torch_hub": "https://pytorch.org/hub",
+      "tf_hub": "https://tfhub.dev"
+    },
+    "model_priorities": {
+      "production": "high",
+      "development": "medium",
+      "demo": "low"
+    }
+  },
+  
+  "integration": {
+    "enable_visual": true,
+    "enable_auditory": true,
+    "sync_processors": true,
+    "fusion_mode": "weighted_average",
+    "consciousness_aggregation": {
+      "visual_weight": 0.5,
+      "auditory_weight": 0.5,
+      "temporal_window": 5.0
+    }
+  },
+  
+  "succession_protocol": {
+    "biometric_requirements": {
+      "face_samples": 5,
+      "voice_samples": 3,
+      "min_confidence": 0.9
+    },
+    "authentication_modes": [
+      "face_recognition",
+      "voice_biometric",
+      "combined"
+    ],
+    "security_level": "high"
+  },
+  
+  "performance_tuning": {
+    "enable_profiling": false,
+    "log_metrics": true,
+    "metric_interval": 60,
+    "adaptive_quality": true,
+    "fallback_models": {
+      "enable": true,
+      "auto_switch_threshold": 0.7
+    }
+  },
+  
+  "api_endpoints": {
+    "visual_stream": "/api/visual/stream",
+    "audio_stream": "/api/audio/stream",
+    "consciousness_metrics": "/api/consciousness/metrics",
+    "biometric_auth": "/api/auth/biometric",
+    "model_status": "/api/models/status"
+  },
+  
+  "websocket_config": {
+    "enable_realtime": true,
+    "heartbeat_interval": 30,
+    "max_connections": 100,
+    "buffer_size": 1024
+  },
+  
+  "logging": {
+    "level": "INFO",
+    "file": "processors.log",
+    "max_size_mb": 100,
+    "backup_count": 5,
+    "include_timestamps": true
+  }
+}

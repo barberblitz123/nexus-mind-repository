@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/workspaces/nexus-mind-repository/nexus-mobile-project/backend/central-consciousness-core/consciousness_core.py", line 14, in <module>
+    from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+ModuleNotFoundError: No module named 'fastapi'

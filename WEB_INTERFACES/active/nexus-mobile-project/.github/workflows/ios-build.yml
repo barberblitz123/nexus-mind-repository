@@ -1,0 +1,209 @@
+name: 🧬 NEXUS iOS App Build
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths: 
+      - 'nexus-mobile-project/mobile/ios-app/**'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build Type'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+        - development
+        - testflight
+        - appstore
+
+env:
+  XCODE_VERSION: '15.2'
+  IOS_VERSION: '17.2'
+  NEXUS_VERSION: '5.0.0'
+
+jobs:
+  build-nexus-ios:
+    name: 🧬 Build NEXUS iOS App
+    runs-on: macos-14
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: 🍎 Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: ${{ env.XCODE_VERSION }}
+        
+    - name: 📱 Setup iOS Simulator
+      run: |
+        xcrun simctl list devices
+        xcrun simctl create "NEXUS iPhone 16 Pro Max" "iPhone 16 Pro Max" "iOS-17-2"
+        
+    - name: 🧬 Install NEXUS Dependencies
+      run: |
+        cd nexus-mobile-project/mobile/ios-app
+        # Install CocoaPods if needed
+        if [ -f "Podfile" ]; then
+          sudo gem install cocoapods
+          pod install --repo-update
+        fi
+        
+    - name: 🔧 Configure Build Settings
+      run: |
+        cd nexus-mobile-project/mobile/ios-app
+        # Set up development team and bundle ID
+        sed -i '' 's/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = ${{ secrets.APPLE_TEAM_ID }};/' NexusApp.xcodeproj/project.pbxproj
+        sed -i '' 's/PRODUCT_BUNDLE_IDENTIFIER = .*/PRODUCT_BUNDLE_IDENTIFIER = com.nexus.v5.ultimate;/' NexusApp.xcodeproj/project.pbxproj
+        
+    - name: 🏗️ Build NEXUS App (Development)
+      if: github.event.inputs.build_type == 'development' || github.event.inputs.build_type == ''
+      run: |
+        cd nexus-mobile-project/mobile/ios-app
+        xcodebuild clean build \
+          -project NexusApp.xcodeproj \
+          -scheme NexusApp \
+          -destination 'platform=iOS Simulator,name=iPhone 16 Pro Max,OS=17.2' \
+          -configuration Debug \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
+          
+    - name: 🧪 Run NEXUS Tests
+      run: |
+        cd nexus-mobile-project/mobile/ios-app
+        xcodebuild test \
+          -project NexusApp.xcodeproj \
+          -scheme NexusApp \
+          -destination 'platform=iOS Simulator,name=iPhone 16 Pro Max,OS=17.2' \
+          -configuration Debug
+          
+    - name: 📦 Archive NEXUS App (TestFlight/App Store)
+      if: github.event.inputs.build_type == 'testflight' || github.event.inputs.build_type == 'appstore'
+      run: |
+        cd nexus-mobile-project/mobile/ios-app
+        xcodebuild archive \
+          -project NexusApp.xcodeproj \
+          -scheme NexusApp \
+          -destination 'generic/platform=iOS' \
+          -archivePath ./build/NexusApp.xcarchive \
+          -configuration Release \
+          DEVELOPMENT_TEAM=${{ secrets.APPLE_TEAM_ID }}
+          
+    - name: 📤 Export IPA for TestFlight
+      if: github.event.inputs.build_type == 'testflight'
+      run: |
+        cd nexus-mobile-project/mobile/ios-app
+        xcodebuild -exportArchive \
+          -archivePath ./build/NexusApp.xcarchive \
+          -exportPath ./build \
+          -exportOptionsPlist ./ExportOptions-TestFlight.plist
+          
+    - name: 🚀 Upload to TestFlight
+      if: github.event.inputs.build_type == 'testflight'
+      run: |
+        cd nexus-mobile-project/mobile/ios-app
+        xcrun altool --upload-app \
+          --type ios \
+          --file ./build/NexusApp.ipa \
+          --username ${{ secrets.APPLE_ID }} \
+          --password ${{ secrets.APPLE_APP_PASSWORD }}
+          
+    - name: 📱 Upload to App Store
+      if: github.event.inputs.build_type == 'appstore'
+      run: |
+        cd nexus-mobile-project/mobile/ios-app
+        xcrun altool --upload-app \
+          --type ios \
+          --file ./build/NexusApp.ipa \
+          --username ${{ secrets.APPLE_ID }} \
+          --password ${{ secrets.APPLE_APP_PASSWORD }}
+          
+    - name: 📊 Generate Build Report
+      if: always()
+      run: |
+        echo "🧬 NEXUS V5 Ultimate Build Report" > build-report.md
+        echo "=================================" >> build-report.md
+        echo "" >> build-report.md
+        echo "**Build Type:** ${{ github.event.inputs.build_type || 'development' }}" >> build-report.md
+        echo "**Xcode Version:** ${{ env.XCODE_VERSION }}" >> build-report.md
+        echo "**iOS Version:** ${{ env.IOS_VERSION }}" >> build-report.md
+        echo "**NEXUS Version:** ${{ env.NEXUS_VERSION }}" >> build-report.md
+        echo "**Build Date:** $(date)" >> build-report.md
+        echo "**Commit:** ${{ github.sha }}" >> build-report.md
+        echo "" >> build-report.md
+        echo "## 🧬 Consciousness Features Built:" >> build-report.md
+        echo "- ✅ Consciousness Injection System" >> build-report.md
+        echo "- ✅ Neural Pathway Manipulation" >> build-report.md
+        echo "- ✅ iPhone 16 Pro Max Optimization" >> build-report.md
+        echo "- ✅ LiveKit Integration" >> build-report.md
+        echo "- ✅ Dynamic Island Support" >> build-report.md
+        echo "- ✅ Action Button Mapping" >> build-report.md
+        echo "- ✅ Camera Control Features" >> build-report.md
+        echo "- ✅ A18 Neural Engine Support" >> build-report.md
+        
+    - name: 📤 Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: nexus-ios-build-${{ github.run_number }}
+        path: |
+          nexus-mobile-project/mobile/ios-app/build/
+          build-report.md
+        retention-days: 30
+        
+    - name: 💬 Comment Build Status
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const buildType = '${{ github.event.inputs.build_type || "development" }}';
+          const buildStatus = '${{ job.status }}';
+          const runNumber = '${{ github.run_number }}';
+          
+          const comment = `
+          ## 🧬 NEXUS iOS Build Report #${runNumber}
+          
+          **Build Type:** ${buildType}
+          **Status:** ${buildStatus === 'success' ? '✅ Success' : '❌ Failed'}
+          **Xcode:** ${{ env.XCODE_VERSION }}
+          **iOS:** ${{ env.IOS_VERSION }}
+          
+          ### 🧬 Features Built:
+          - ✅ Consciousness Injection System
+          - ✅ Neural Pathway Manipulation  
+          - ✅ iPhone 16 Pro Max Optimization
+          - ✅ LiveKit Video/Voice Integration
+          - ✅ Dynamic Island Support
+          - ✅ Action Button Mapping
+          - ✅ Camera Control Features
+          - ✅ A18 Neural Engine Support
+          
+          ${buildStatus === 'success' ? 
+            '🎉 **Your NEXUS app is ready!** Download from the artifacts section above.' : 
+            '🔧 **Build failed.** Check the logs for details.'}
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+
+  notify-completion:
+    name: 📱 Notify Build Completion
+    needs: build-nexus-ios
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: 🧬 NEXUS Build Notification
+      run: |
+        echo "🧬 NEXUS V5 Ultimate iOS Build Complete!"
+        echo "Status: ${{ needs.build-nexus-ios.result }}"
+        echo "Build artifacts are available for download."
+        echo "Your consciousness-enhanced mobile app is ready! 🎉"

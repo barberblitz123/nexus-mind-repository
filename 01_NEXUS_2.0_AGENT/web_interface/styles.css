@@ -1,0 +1,383 @@
+/* NEXUS 2.0 Development Workspace - Clean, Functional, No BS */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.nexus-workspace {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Header */
+.header-bar {
+    background: #151515;
+    border-bottom: 1px solid #333;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-bar h1 {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.connection-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: #4ade80;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+/* Main Layout */
+.main-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Stage Manager */
+.stage-manager {
+    width: 300px;
+    background: #0d0d0d;
+    border-right: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+}
+
+.section-header {
+    padding: 1rem;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-header h2 {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+.agent-windows {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.agent-window {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.agent-window:hover {
+    border-color: #3b82f6;
+}
+
+.agent-window.active {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.agent-name {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.agent-status {
+    font-size: 0.875rem;
+    color: #888;
+}
+
+.agent-status.working {
+    color: #f59e0b;
+}
+
+.agent-status.completed {
+    color: #4ade80;
+}
+
+/* Desktop Manager */
+.desktop-manager {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Code Area */
+.code-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.file-tabs {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0 1rem;
+}
+
+.file-tab {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-bottom: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.file-tab.active {
+    background: #0a0a0a;
+    border-color: #3b82f6;
+}
+
+/* Drop Zone */
+.drop-zone {
+    flex: 1;
+    position: relative;
+    background: #0a0a0a;
+    border: 2px dashed #333;
+    margin: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.drop-zone.dragover {
+    border-color: #3b82f6;
+    background: #0a1420;
+}
+
+.drop-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #666;
+}
+
+.drop-message svg {
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.drop-message h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+#fileInput {
+    display: none;
+}
+
+/* Code Editor */
+.code-editor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    background: #0a0a0a;
+    padding: 1rem;
+}
+
+.code-editor pre {
+    margin: 0;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Communication Panel */
+.communication-panel {
+    height: 300px;
+    border-top: 1px solid #333;
+    display: flex;
+}
+
+/* Chat Section */
+.chat-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #333;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.chat-message {
+    margin-bottom: 1rem;
+}
+
+.chat-message .sender {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    color: #3b82f6;
+}
+
+.chat-message.user .sender {
+    color: #4ade80;
+}
+
+.chat-message .content {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.chat-input-area {
+    padding: 1rem;
+    border-top: 1px solid #333;
+    display: flex;
+    gap: 0.5rem;
+}
+
+#chatInput {
+    flex: 1;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    padding: 0.5rem 1rem;
+    color: #e0e0e0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+#chatInput:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+#sendBtn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Media Controls */
+.media-controls {
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+}
+
+.media-buttons {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem;
+}
+
+.media-btn {
+    flex: 1;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #e0e0e0;
+    padding: 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.media-btn:hover {
+    border-color: #3b82f6;
+}
+
+.media-btn.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.video-container {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#localVideo {
+    width: 100%;
+    max-width: 200px;
+    border-radius: 8px;
+    background: #000;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}

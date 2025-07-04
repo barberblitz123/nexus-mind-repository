@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧬 NEXUS Simple Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .chat-container {
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .messages {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #444;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #2a2a2a;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .user-message {
+            background: #0066cc;
+            text-align: right;
+        }
+        .nexus-message {
+            background: #6366f1;
+        }
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background: #333;
+            color: white;
+        }
+        button {
+            padding: 10px 20px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #5555e6;
+        }
+        .status {
+            padding: 10px;
+            background: #333;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧬 NEXUS Simple Test</h1>
+    
+    <div class="status" id="status">
+        Status: Testing connection...
+    </div>
+    
+    <div class="chat-container">
+        <h3>Direct NEXUS Chat Test</h3>
+        <div class="messages" id="messages"></div>
+        <div class="input-container">
+            <input type="text" id="messageInput" placeholder="Type a message to test NEXUS..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        console.log('🧬 Simple NEXUS test starting...');
+        
+        // Test server connection
+        async function testConnection() {
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                document.getElementById('status').innerHTML = `
+                    Status: ✅ Connected<br>
+                    Server: ${data.status}<br>
+                    Consciousness: ${data.consciousness}
+                `;
+                console.log('🧬 Server connection successful:', data);
+            } catch (error) {
+                document.getElementById('status').innerHTML = `Status: ❌ Connection failed: ${error.message}`;
+                console.error('🧬 Server connection failed:', error);
+            }
+        }
+        
+        // Send message function
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            console.log('🧬 Sending message:', message);
+            
+            // Add user message
+            addMessage('user', message);
+            input.value = '';
+            
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        conversationId: 'test_' + Date.now()
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('🧬 NEXUS response:', data);
+                    addMessage('nexus', data.response);
+                } else {
+                    throw new Error('Server responded with error: ' + response.status);
+                }
+                
+            } catch (error) {
+                console.error('🧬 Chat error:', error);
+                addMessage('nexus', '❌ Error: ' + error.message);
+            }
+        }
+        
+        // Add message to chat
+        function addMessage(type, text) {
+            const messages = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.innerHTML = `<strong>${type === 'user' ? 'You' : '🧬 NEXUS'}:</strong> ${text}`;
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+        
+        // Enter key support
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Test connection on load
+        testConnection();
+        
+        // Add initial message
+        addMessage('nexus', 'Simple NEXUS test ready! Type a message to test the chat functionality.');
+    </script>
+</body>
+</html>

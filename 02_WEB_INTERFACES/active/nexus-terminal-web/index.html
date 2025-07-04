@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#000000">
+    <title>NEXUS 2.0</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- Terminal CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.1.0/css/xterm.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header Bar -->
+        <div class="header-bar">
+            <div class="logo">NEXUS 2.0</div>
+            <div class="status">
+                <span id="agent-count">Agents: 0</span>
+                <span id="connection-status" class="connected">●</span>
+            </div>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="main-container">
+            <!-- Stage Manager Panel -->
+            <div class="stage-manager" id="stage-manager">
+                <div class="panel-header">
+                    <h3>Stage Manager</h3>
+                    <button class="btn-small" onclick="createAgent()">+ Agent</button>
+                </div>
+                <div class="agent-windows" id="agent-windows">
+                    <!-- Agent windows will be dynamically added here -->
+                </div>
+                <div class="stage-controls">
+                    <button onclick="arrangeGrid()">Grid</button>
+                    <button onclick="arrangeCascade()">Cascade</button>
+                </div>
+            </div>
+
+            <!-- Desktop Manager Panel -->
+            <div class="desktop-manager">
+                <!-- Chat Section -->
+                <div class="chat-section">
+                    <div class="panel-header">
+                        <h3>Chat</h3>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message system">
+                            <span class="sender">System:</span>
+                            <span class="content">Welcome to NEXUS 2.0! Type 'help' for commands.</span>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="chat-input" placeholder="Type a command or message..." />
+                        <button onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="preview-section">
+                    <div class="panel-header">
+                        <h3>Preview</h3>
+                        <select id="preview-selector" onchange="switchPreview()">
+                            <option value="terminal">Terminal</option>
+                            <option value="code">Code</option>
+                            <option value="output">Output</option>
+                        </select>
+                    </div>
+                    <div class="preview-content" id="preview-content">
+                        <div id="terminal-container"></div>
+                        <div id="code-preview" style="display:none;">
+                            <pre><code id="code-content">// Code will appear here</code></pre>
+                        </div>
+                        <div id="output-preview" style="display:none;">
+                            <pre id="output-content">Output will appear here</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav">
+            <button onclick="showPanel('stage')">Stage</button>
+            <button onclick="showPanel('chat')">Chat</button>
+            <button onclick="showPanel('preview')">Preview</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.1.0/lib/xterm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Register service worker for offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(function(registration) {
+                console.log('ServiceWorker registered');
+            });
+        }
+    </script>
+</body>
+</html>

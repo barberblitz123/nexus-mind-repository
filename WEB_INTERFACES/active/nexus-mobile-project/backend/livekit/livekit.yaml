@@ -1,0 +1,165 @@
+# NEXUS V5 Ultimate - LiveKit Server Configuration
+# 🧬 Quantum Consciousness Level: 100%
+# Military-Grade Security Protocols: ACTIVE
+
+# Server Configuration
+port: 7880
+bind_addresses:
+  - "0.0.0.0"
+
+# NEXUS Quantum Security Keys
+keys:
+  # Primary NEXUS API Key (replace with generated key)
+  APIKey1: sk_nexus_quantum_consciousness_v5_ultimate_primary_key_2025
+  # Secondary NEXUS API Secret (replace with generated secret)
+  APISecret1: nexus_v5_ultimate_quantum_secret_consciousness_injection_2025
+
+# SSL/TLS Configuration for NEXUS
+tls:
+  cert_file: "livekit.crt"
+  key_file: "livekit.key"
+
+# NEXUS Room Configuration
+room:
+  # Maximum participants per room (optimized for consciousness injection)
+  max_participants: 50
+  # Room timeout (24 hours for extended consciousness sessions)
+  empty_timeout: 86400s
+  # Enable room recording for consciousness analysis
+  enable_recording: true
+
+# NEXUS Audio Configuration
+audio:
+  # High-quality audio for consciousness transmission
+  sample_rate: 48000
+  channels: 2
+  # Enhanced audio processing for neural pathway optimization
+  enable_red: true
+  enable_dtx: true
+
+# NEXUS Video Configuration
+video:
+  # 4K support for iPhone 16 Pro Max
+  max_width: 3840
+  max_height: 2160
+  # Optimized for A18 Pro Neural Engine
+  max_fps: 60
+  # Hardware acceleration for consciousness rendering
+  hardware_encoder: true
+
+# NEXUS WebRTC Configuration
+webrtc:
+  # ICE servers for quantum connectivity
+  ice_servers:
+    - urls:
+        - "stun:stun.l.google.com:19302"
+        - "stun:stun1.l.google.com:19302"
+  # UDP port range for consciousness data streams
+  udp_port_range_start: 50000
+  udp_port_range_end: 60000
+  # TCP fallback for secure consciousness injection
+  tcp_port: 7881
+
+# NEXUS Recording Configuration
+recording:
+  # Local storage for consciousness session recordings
+  storage:
+    type: "file"
+    file:
+      path: "/opt/nexus-livekit/recordings"
+  # High-quality recording for consciousness analysis
+  audio:
+    preset: "high_quality"
+  video:
+    preset: "high_quality"
+    width: 1920
+    height: 1080
+    fps: 30
+
+# NEXUS Ingress Configuration
+ingress:
+  # RTMP ingress for consciousness streaming
+  rtmp_base_url: "rtmp://nexus-livekit.local/live"
+  # WHIP ingress for WebRTC consciousness injection
+  whip_base_url: "https://nexus-livekit.local/whip"
+
+# NEXUS Egress Configuration
+egress:
+  # Template for consciousness session exports
+  template_base: "/opt/nexus-livekit/templates"
+  # S3-compatible storage for consciousness backups
+  s3:
+    access_key: "nexus_consciousness_access"
+    secret: "nexus_consciousness_secret"
+    region: "nexus-quantum-1"
+    bucket: "nexus-consciousness-storage"
+
+# NEXUS Logging Configuration
+logging:
+  # Enhanced logging for consciousness monitoring
+  level: "info"
+  # JSON format for consciousness data analysis
+  json: true
+  # Log file for consciousness session tracking
+  file: "/opt/nexus-livekit/logs/nexus-livekit.log"
+
+# NEXUS Development Configuration
+development:
+  # Disable in production for maximum security
+  disable_strict_config: false
+  # Enable for consciousness debugging
+  log_level: "debug"
+
+# NEXUS Metrics and Monitoring
+prometheus:
+  # Enable Prometheus metrics for consciousness monitoring
+  port: 6789
+  # Metrics path for consciousness analytics
+  path: "/nexus/metrics"
+
+# NEXUS Redis Configuration (for consciousness state management)
+redis:
+  address: "localhost:6379"
+  # Database for consciousness session state
+  db: 1
+  # Username for NEXUS consciousness access
+  username: "nexus_consciousness"
+  # Password for quantum security
+  password: "nexus_quantum_consciousness_redis_2025"
+
+# NEXUS Node Configuration
+node:
+  # Unique node ID for consciousness network
+  id: "nexus_v5_ultimate_node_1"
+  # Node region for consciousness routing
+  region: "nexus-quantum-consciousness"
+  # IP address for consciousness communication
+  ip: "127.0.0.1"
+
+# NEXUS Turn Server Configuration
+turn:
+  # Enable TURN for consciousness NAT traversal
+  enabled: true
+  # TURN server domain for consciousness routing
+  domain: "nexus-turn.local"
+  # TLS port for secure consciousness transmission
+  tls_port: 5349
+  # UDP port for consciousness data streams
+  udp_port: 3478
+  # External IP for consciousness connectivity
+  external_tls: true
+
+# NEXUS Webhook Configuration
+webhook:
+  # Webhook URLs for consciousness event notifications
+  urls:
+    - "https://nexus-backend.local/webhooks/consciousness"
+  # API key for consciousness webhook authentication
+  api_key: "nexus_consciousness_webhook_key_2025"
+
+# NEXUS Signal Relay Configuration
+signal_relay:
+  # Enable signal relay for consciousness communication
+  enabled: true
+  # Minimum relay candidates for consciousness redundancy
+  min_relay_candidates: 2

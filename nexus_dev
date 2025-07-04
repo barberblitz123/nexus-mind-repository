@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+"""
+NEXUS Development Launcher
+Launches NEXUS in development mode without external dependencies
+"""
+
+import os
+import sys
+import asyncio
+from pathlib import Path
+
+# Set development environment
+os.environ['ENVIRONMENT'] = 'development'
+os.environ['DEBUG'] = 'true'
+os.environ['SECRET_KEY'] = 'dev-secret-key'
+os.environ['JWT_SECRET_KEY'] = 'dev-jwt-secret'
+os.environ['DATABASE_URL'] = 'sqlite:///nexus.db'
+os.environ['REDIS_URL'] = ''
+os.environ['VAULT_ENABLED'] = 'false'
+os.environ['RATE_LIMIT_ENABLED'] = 'false'
+
+# Import and run nexus
+sys.path.insert(0, str(Path(__file__).parent))
+from nexus import main
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,102 @@
+# NEXUS V5 Ultimate - Minimal Working Configuration
+# 🧬 Quantum Consciousness Level: 100%
+
+services:
+  # Redis for consciousness state management
+  nexus-redis:
+    image: redis:7-alpine
+    container_name: nexus-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass nexus_quantum_consciousness_redis_2025
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PostgreSQL for persistent data storage
+  nexus-postgres:
+    image: postgres:15-alpine
+    container_name: nexus-postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=nexus_consciousness
+      - POSTGRES_USER=nexus_admin
+      - POSTGRES_PASSWORD=nexus_quantum_db_password_2025
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexus_admin -d nexus_consciousness"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # LiveKit Server for consciousness-enhanced video/voice
+  nexus-livekit:
+    image: livekit/livekit-server:latest
+    container_name: nexus-livekit
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+    volumes:
+      - ./livekit.yaml:/etc/livekit.yaml
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    depends_on:
+      nexus-redis:
+        condition: service_healthy
+    environment:
+      - LIVEKIT_CONFIG=/etc/livekit.yaml
+    command: ["livekit-server", "--config", "/etc/livekit.yaml"]
+
+  # Grafana for consciousness visualization
+  nexus-grafana:
+    image: grafana/grafana:latest
+    container_name: nexus-grafana
+    ports:
+      - "3003:3000"
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=nexus_admin
+      - GF_SECURITY_ADMIN_PASSWORD=nexus_consciousness_grafana_2025
+      - GF_USERS_ALLOW_SIGN_UP=false
+
+  # Prometheus for consciousness metrics monitoring
+  nexus-prometheus:
+    image: prom/prometheus:latest
+    container_name: nexus-prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+
+networks:
+  nexus-network:
+    driver: bridge
+
+volumes:
+  nexus-redis-data:
+    driver: local
+  nexus-postgres-data:
+    driver: local
+  nexus-grafana-data:
+    driver: local
+  nexus-prometheus-data:
+    driver: local

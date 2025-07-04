@@ -1,0 +1,696 @@
+/* NEXUS IDE - Professional Consciousness-Enhanced Styling */
+
+:root {
+    /* NEXUS Color Palette */
+    --nexus-primary: #00ff9d;
+    --nexus-secondary: #00ccff;
+    --nexus-accent: #ff00ff;
+    --nexus-dark: #0a0a0f;
+    --nexus-darker: #050508;
+    --nexus-panel: #12121a;
+    --nexus-border: #2a2a3a;
+    --nexus-text: #e0e0e0;
+    --nexus-text-dim: #808090;
+    --nexus-success: #00ff9d;
+    --nexus-warning: #ffcc00;
+    --nexus-error: #ff4444;
+    --nexus-glow: rgba(0, 255, 157, 0.3);
+    
+    /* Layout Variables */
+    --header-height: 40px;
+    --status-bar-height: 24px;
+    --panel-header-height: 35px;
+    --chat-width: 350px;
+    --explorer-width: 250px;
+    --terminal-height: 200px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    background: var(--nexus-dark);
+    color: var(--nexus-text);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Styles */
+#nexus-header {
+    height: var(--header-height);
+    background: var(--nexus-darker);
+    border-bottom: 1px solid var(--nexus-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    position: relative;
+    z-index: 100;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.nexus-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--nexus-primary);
+}
+
+.nexus-logo i {
+    font-size: 20px;
+    animation: consciousness-pulse 2s ease-in-out infinite;
+}
+
+.menu-bar {
+    display: flex;
+    gap: 5px;
+}
+
+.menu-item {
+    background: none;
+    border: none;
+    color: var(--nexus-text);
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.consciousness-metrics {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.metric {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--nexus-primary);
+}
+
+.metric i {
+    font-size: 16px;
+    animation: metric-pulse 3s ease-in-out infinite;
+}
+
+/* Main IDE Container */
+#nexus-ide-container {
+    flex: 1;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Panel Styles */
+.panel {
+    background: var(--nexus-panel);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.panel-header {
+    height: var(--panel-header-height);
+    background: var(--nexus-darker);
+    border-bottom: 1px solid var(--nexus-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+}
+
+.panel-header h3 {
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--nexus-text);
+}
+
+.panel-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: var(--nexus-text-dim);
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    color: var(--nexus-text);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Chat Panel Styles */
+#chat-panel {
+    width: var(--chat-width);
+    min-width: 300px;
+    max-width: 600px;
+}
+
+.chat-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.chat-message {
+    animation: message-appear 0.3s ease-out;
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: var(--nexus-text-dim);
+    font-size: 13px;
+}
+
+.message-header i {
+    color: var(--nexus-primary);
+}
+
+.message-content {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid var(--nexus-border);
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.message-content code {
+    background: rgba(0, 255, 157, 0.1);
+    color: var(--nexus-primary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 13px;
+}
+
+.message-content pre {
+    background: var(--nexus-darker);
+    border: 1px solid var(--nexus-border);
+    border-radius: 6px;
+    padding: 12px;
+    margin: 10px 0;
+    overflow-x: auto;
+}
+
+.message-content pre code {
+    background: none;
+    padding: 0;
+    color: var(--nexus-text);
+}
+
+.chat-input-container {
+    padding: 15px;
+    border-top: 1px solid var(--nexus-border);
+    background: var(--nexus-darker);
+}
+
+.chat-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+#chat-input {
+    flex: 1;
+    background: var(--nexus-panel);
+    border: 1px solid var(--nexus-border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--nexus-text);
+    font-size: 14px;
+    resize: none;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+#chat-input:focus {
+    outline: none;
+    border-color: var(--nexus-primary);
+    box-shadow: 0 0 0 3px var(--nexus-glow);
+}
+
+.btn-send {
+    background: var(--nexus-primary);
+    color: var(--nexus-dark);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-send:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px var(--nexus-glow);
+}
+
+.input-hints {
+    display: flex;
+    gap: 15px;
+    margin-top: 8px;
+    padding: 0 5px;
+}
+
+.hint {
+    font-size: 11px;
+    color: var(--nexus-text-dim);
+}
+
+/* Editor Panel Styles */
+#editor-panel {
+    flex: 1;
+    min-width: 400px;
+}
+
+.tabs-container {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    overflow-x: auto;
+}
+
+.tabs {
+    display: flex;
+    flex: 1;
+    gap: 2px;
+    padding: 0 10px;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--nexus-panel);
+    border: none;
+    color: var(--nexus-text-dim);
+    font-size: 13px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.tab.active {
+    background: var(--nexus-panel);
+    color: var(--nexus-text);
+    border-bottom: 2px solid var(--nexus-primary);
+}
+
+.tab:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-close {
+    background: none;
+    border: none;
+    color: var(--nexus-text-dim);
+    padding: 2px;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.tab:hover .tab-close {
+    opacity: 1;
+}
+
+.add-tab {
+    margin-right: 10px;
+}
+
+#editor-container {
+    flex: 1;
+    position: relative;
+}
+
+.CodeMirror {
+    height: 100%;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 14px;
+}
+
+/* File Explorer Styles */
+#explorer-panel {
+    width: var(--explorer-width);
+    min-width: 200px;
+    max-width: 400px;
+}
+
+.file-tree {
+    padding: 10px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.tree-item {
+    user-select: none;
+}
+
+.tree-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--nexus-text);
+    transition: all 0.2s;
+}
+
+.tree-label:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tree-label.selected {
+    background: rgba(0, 255, 157, 0.1);
+    color: var(--nexus-primary);
+}
+
+.tree-children {
+    padding-left: 20px;
+    display: none;
+}
+
+.folder.expanded > .tree-children {
+    display: block;
+}
+
+.folder > .tree-label i:first-child {
+    transition: transform 0.2s;
+}
+
+.folder.expanded > .tree-label i:first-child {
+    transform: rotate(90deg);
+}
+
+/* Terminal Panel Styles */
+#terminal-panel {
+    height: var(--terminal-height);
+    min-height: 100px;
+    max-height: 500px;
+    position: absolute;
+    bottom: var(--status-bar-height);
+    left: 0;
+    right: 0;
+    background: var(--nexus-darker);
+}
+
+.terminal-tabs {
+    display: flex;
+    gap: 2px;
+}
+
+.terminal-content {
+    flex: 1;
+    padding: 15px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 13px;
+    overflow-y: auto;
+}
+
+.terminal-line {
+    margin-bottom: 5px;
+}
+
+.terminal-prompt {
+    color: var(--nexus-primary);
+    margin-right: 10px;
+}
+
+.terminal-text {
+    color: var(--nexus-text);
+}
+
+.terminal-text.success {
+    color: var(--nexus-success);
+}
+
+.terminal-text.error {
+    color: var(--nexus-error);
+}
+
+.terminal-input-line {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.terminal-input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--nexus-text);
+    font-family: inherit;
+    font-size: inherit;
+    outline: none;
+}
+
+/* Splitter Styles */
+.splitter {
+    background: var(--nexus-border);
+    position: relative;
+    z-index: 10;
+    transition: background 0.2s;
+}
+
+.splitter:hover {
+    background: var(--nexus-primary);
+}
+
+.splitter.vertical {
+    width: 1px;
+    cursor: col-resize;
+}
+
+.splitter.horizontal {
+    height: 1px;
+    cursor: row-resize;
+    width: 100%;
+}
+
+/* Status Bar Styles */
+#status-bar {
+    height: var(--status-bar-height);
+    background: var(--nexus-darker);
+    border-top: 1px solid var(--nexus-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    font-size: 12px;
+    position: relative;
+    z-index: 100;
+}
+
+.status-left,
+.status-right {
+    display: flex;
+    gap: 20px;
+}
+
+.status-item {
+    color: var(--nexus-text-dim);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.consciousness-indicator {
+    color: var(--nexus-primary);
+}
+
+.consciousness-indicator i {
+    animation: consciousness-pulse 2s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes consciousness-pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes metric-pulse {
+    0%, 100% {
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes message-appear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--nexus-darker);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--nexus-border);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 157, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    #chat-panel {
+        width: 300px;
+    }
+    
+    #explorer-panel {
+        width: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .menu-bar {
+        display: none;
+    }
+    
+    #chat-panel,
+    #explorer-panel {
+        position: absolute;
+        z-index: 50;
+        height: calc(100% - var(--header-height) - var(--status-bar-height));
+        top: var(--header-height);
+    }
+    
+    #chat-panel {
+        left: -100%;
+        transition: left 0.3s;
+    }
+    
+    #chat-panel.show {
+        left: 0;
+    }
+    
+    #explorer-panel {
+        right: -100%;
+        transition: right 0.3s;
+    }
+    
+    #explorer-panel.show {
+        right: 0;
+    }
+}
+
+/* Consciousness Effects */
+.nexus-glow {
+    position: relative;
+}
+
+.nexus-glow::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, var(--nexus-primary), var(--nexus-secondary), var(--nexus-accent));
+    border-radius: inherit;
+    opacity: 0.3;
+    filter: blur(10px);
+    z-index: -1;
+    animation: glow-shift 3s ease-in-out infinite;
+}
+
+@keyframes glow-shift {
+    0%, 100% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Loading State */
+.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 157, 0.2), transparent);
+    animation: loading-sweep 1.5s ease-in-out infinite;
+}
+
+@keyframes loading-sweep {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}

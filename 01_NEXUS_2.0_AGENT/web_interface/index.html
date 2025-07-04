@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS 2.0 - Development Workspace</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="nexus-workspace">
+        <!-- Header Bar -->
+        <header class="header-bar">
+            <h1>NEXUS 2.0 Development Workspace</h1>
+            <div class="connection-status">
+                <span class="status-dot"></span>
+                <span id="status">Connected</span>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <!-- Stage Manager - Left Side -->
+            <section class="stage-manager">
+                <div class="section-header">
+                    <h2>Stage Manager - Active Agents</h2>
+                    <button id="newAgentBtn" class="btn-primary">+ New Agent</button>
+                </div>
+                <div id="agentWindows" class="agent-windows">
+                    <!-- Agent windows will be dynamically added here -->
+                </div>
+            </section>
+
+            <!-- Desktop Manager - Center/Right -->
+            <section class="desktop-manager">
+                <!-- Code Drop Zone - Main Development Area -->
+                <div class="code-area">
+                    <div class="section-header">
+                        <h2>Development Space</h2>
+                        <div class="file-tabs" id="fileTabs">
+                            <!-- File tabs will appear here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Drop Zone for Code Files -->
+                    <div id="dropZone" class="drop-zone">
+                        <div class="drop-message">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <h3>Drop Your Code Files Here</h3>
+                            <p>or click to browse</p>
+                            <input type="file" id="fileInput" multiple accept=".js,.py,.html,.css,.json,.md,.txt">
+                        </div>
+                        
+                        <!-- Code Editor (hidden until file is dropped) -->
+                        <div id="codeEditor" class="code-editor hidden">
+                            <pre><code id="codeContent"></code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Section: Chat + Media -->
+                <div class="communication-panel">
+                    <!-- Chat Interface -->
+                    <div class="chat-section">
+                        <div class="section-header">
+                            <h3>Chat</h3>
+                        </div>
+                        <div id="chatMessages" class="chat-messages">
+                            <!-- Messages will appear here -->
+                        </div>
+                        <div class="chat-input-area">
+                            <input type="text" id="chatInput" placeholder="Ask agents to analyze, fix, or improve your code...">
+                            <button id="sendBtn">Send</button>
+                        </div>
+                    </div>
+
+                    <!-- Media Controls -->
+                    <div class="media-controls">
+                        <div class="section-header">
+                            <h3>Communication</h3>
+                        </div>
+                        <div class="media-buttons">
+                            <button id="cameraBtn" class="media-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                    <circle cx="12" cy="13" r="4"></circle>
+                                </svg>
+                                Camera
+                            </button>
+                            <button id="micBtn" class="media-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                    <line x1="12" y1="19" x2="12" y2="23"></line>
+                                    <line x1="8" y1="23" x2="16" y2="23"></line>
+                                </svg>
+                                Voice
+                            </button>
+                        </div>
+                        <div id="videoContainer" class="video-container hidden">
+                            <video id="localVideo" autoplay muted></video>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="nexus-workspace.js"></script>
+</body>
+</html>

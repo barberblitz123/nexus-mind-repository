@@ -1,0 +1,28 @@
+{
+  "name": "nexus-2.0-web",
+  "version": "2.0.0",
+  "description": "NEXUS 2.0 Stage + Desktop Manager - Web Version",
+  "main": "stage_desktop_server.js",
+  "scripts": {
+    "start": "node stage_desktop_server.js",
+    "dev": "node stage_desktop_server.js",
+    "bridge": "python3 nexus_web_integration.py",
+    "launch": "./launch_web_nexus.sh"
+  },
+  "keywords": [
+    "nexus",
+    "ai",
+    "agents",
+    "stage-manager",
+    "desktop-manager"
+  ],
+  "author": "NEXUS Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "ws": "^8.18.3"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

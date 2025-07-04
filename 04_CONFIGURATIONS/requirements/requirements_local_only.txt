@@ -1,0 +1,23 @@
+# NEXUS 2.0 Local-Only Requirements
+# No external APIs or cloud services needed!
+
+# Core UI libraries (all work offline)
+rich>=13.0.0           # Terminal UI formatting
+prompt-toolkit>=3.0.0  # Terminal input handling
+tkinter                # GUI (usually comes with Python)
+
+# Local data storage
+# SQLite3 comes built-in with Python - no installation needed!
+
+# Optional local-only enhancements (all work offline)
+pillow>=10.0.0        # Local image processing (if you want vision features)
+pyttsx3>=2.90         # Local text-to-speech (if you want voice features)
+speechrecognition>=3.10.0  # Local speech recognition (optional)
+
+# Basic utilities (all work offline)
+python-dotenv>=1.0.0  # Environment variable management
+aiofiles>=23.0.0      # Async file operations
+watchdog>=3.0.0       # File system monitoring
+
+# Note: This is ALL you need for the local-only version!
+# No subscriptions, no API keys, no cloud services!

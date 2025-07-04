@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS 2.0 - Stage Manager + Desktop Manager (Web Version)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .nexus-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            gap: 1px;
+            background: #2a2a2a;
+        }
+
+        /* Header */
+        .nexus-header {
+            grid-column: 1 / -1;
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 2px solid #00ff88;
+        }
+
+        .nexus-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #00ff88;
+            margin-right: auto;
+        }
+
+        /* Stage Manager */
+        .stage-manager {
+            background: #1a1a1a;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #3a3a3a;
+        }
+
+        .stage-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .agent-window {
+            background: #2a2a2a;
+            border: 2px solid #3a3a3a;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .agent-window.active {
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .agent-window.working {
+            border-color: #ffaa00;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .agent-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .agent-type {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .agent-status {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #888;
+        }
+
+        .status-dot.working { background: #ffaa00; }
+        .status-dot.idle { background: #00ff88; }
+        .status-dot.error { background: #ff4444; }
+
+        /* Desktop Manager */
+        .desktop-manager {
+            display: grid;
+            grid-template-rows: 1fr 300px;
+            gap: 1px;
+            background: #2a2a2a;
+        }
+
+        /* Preview Area */
+        .preview-area {
+            background: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-tabs {
+            display: flex;
+            background: #0a0a0a;
+            border-bottom: 1px solid #3a3a3a;
+            overflow-x: auto;
+        }
+
+        .preview-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-right: 1px solid #3a3a3a;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+
+        .preview-tab.active {
+            background: #2a2a2a;
+            color: #00ff88;
+            border-bottom: 2px solid #00ff88;
+        }
+
+        .preview-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        /* Chat Area */
+        .chat-area {
+            background: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid #3a3a3a;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            color: #00ff88;
+            min-width: 60px;
+        }
+
+        .message-sender.agent {
+            color: #ffaa00;
+        }
+
+        .message-content {
+            flex: 1;
+            color: #e0e0e0;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid #3a3a3a;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            padding: 10px 15px;
+            color: #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        .send-button {
+            background: #00ff88;
+            color: #0a0a0a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .send-button:hover {
+            background: #00cc66;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nexus-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stage-manager {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nexus-container">
+        <!-- Header -->
+        <header class="nexus-header">
+            <h1 class="nexus-title">NEXUS 2.0 - Stage + Desktop Manager</h1>
+            <div class="status">
+                Connected: <span id="connectionStatus">✓</span>
+            </div>
+        </header>
+
+        <!-- Stage Manager -->
+        <aside class="stage-manager" id="stageManager">
+            <h2 class="stage-title">Active Agents</h2>
+            <div id="agentList">
+                <!-- Agents will be added here dynamically -->
+            </div>
+        </aside>
+
+        <!-- Desktop Manager -->
+        <main class="desktop-manager">
+            <!-- Preview Area -->
+            <div class="preview-area">
+                <div class="preview-tabs" id="previewTabs">
+                    <div class="preview-tab active" data-tab="welcome">Welcome</div>
+                </div>
+                <div class="preview-content" id="previewContent">
+Welcome to NEXUS 2.0 Stage + Desktop Manager!
+
+This is the web version of your terminal-based system.
+
+How it works:
+1. Type commands in the chat below
+2. Agents appear in the Stage Manager (left)
+3. Results show in preview tabs (here)
+4. Everything runs simultaneously!
+
+Try: "Build a Python API" or "Analyze this code"
+                </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-area">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-message">
+                        <span class="message-sender">System</span>
+                        <span class="message-content">NEXUS 2.0 initialized. Ready for commands!</span>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input 
+                        type="text" 
+                        class="chat-input" 
+                        id="chatInput" 
+                        placeholder="Type a command..."
+                        autofocus
+                    >
+                    <button class="send-button" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // State management
+        const state = {
+            agents: new Map(),
+            activeAgent: null,
+            previewTabs: new Map([['welcome', 'Welcome content...']])
+        };
+
+        // WebSocket connection to REAL NEXUS system
+        let websocket = null;
+        let connectionStatus = 'disconnected';
+
+        function connectToNEXUS() {
+            try {
+                websocket = new WebSocket('ws://localhost:8765');
+                
+                websocket.onopen = function(event) {
+                    connectionStatus = 'connected';
+                    document.getElementById('connectionStatus').textContent = '✓ REAL';
+                    document.getElementById('connectionStatus').style.color = '#00ff88';
+                    addChatMessage('System', 'Connected to REAL NEXUS system!', 'system');
+                    console.log('Connected to NEXUS WebSocket server');
+                };
+                
+                websocket.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    handleNEXUSMessage(data);
+                };
+                
+                websocket.onclose = function(event) {
+                    connectionStatus = 'disconnected';
+                    document.getElementById('connectionStatus').textContent = '✗ DISCONNECTED';
+                    document.getElementById('connectionStatus').style.color = '#ff4444';
+                    addChatMessage('System', 'Disconnected from NEXUS system', 'system');
+                    console.log('Disconnected from NEXUS WebSocket server');
+                    
+                    // Try to reconnect after 3 seconds
+                    setTimeout(connectToNEXUS, 3000);
+                };
+                
+                websocket.onerror = function(error) {
+                    console.error('WebSocket error:', error);
+                    addChatMessage('System', 'Connection error - falling back to simulation mode', 'system');
+                };
+                
+            } catch (error) {
+                console.error('Failed to connect to NEXUS:', error);
+                addChatMessage('System', 'Failed to connect - running in simulation mode', 'system');
+            }
+        }
+
+        function handleNEXUSMessage(data) {
+            console.log('Received from NEXUS:', data);
+            
+            switch (data.type) {
+                case 'initial_state':
+                    // Load existing agents from NEXUS
+                    if (data.data.agents) {
+                        data.data.agents.forEach(agent => {
+                            state.agents.set(agent.id, agent);
+                        });
+                        renderAgents();
+                    }
+                    break;
+                    
+                case 'agent_created':
+                    // Real agent created by NEXUS
+                    const agent = data.data;
+                    state.agents.set(agent.agent_id, {
+                        id: agent.agent_id,
+                        name: agent.name,
+                        type: agent.type,
+                        status: agent.status || 'working',
+                        task: agent.task || 'Processing...'
+                    });
+                    renderAgents();
+                    addChatMessage('NEXUS', `Created ${agent.name} (${agent.type})`, 'agent');
+                    createPreviewTab(agent.agent_id, agent.task || 'NEXUS Task');
+                    break;
+                    
+                case 'task_result':
+                    // Real task results from NEXUS
+                    const result = data.data;
+                    if (result.agent_id && state.agents.has(result.agent_id)) {
+                        const agent = state.agents.get(result.agent_id);
+                        agent.status = result.success ? 'idle' : 'error';
+                        renderAgents();
+                        
+                        const output = result.output || result.error || 'Task completed';
+                        updatePreview(result.agent_id, output);
+                        addChatMessage(agent.name, output, 'agent');
+                    }
+                    break;
+                    
+                case 'metrics':
+                    // System metrics from NEXUS
+                    console.log('NEXUS Metrics:', data.data);
+                    break;
+                    
+                case 'error':
+                    addChatMessage('NEXUS', `Error: ${data.message}`, 'system');
+                    break;
+            }
+        }
+
+        function sendToNEXUS(message) {
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                websocket.send(JSON.stringify(message));
+                return true;
+            }
+            return false;
+        }
+
+        // Agent creation logic - now connects to REAL NEXUS
+        function createAgent(task) {
+            // Try to send to real NEXUS system first
+            if (sendToNEXUS({
+                type: 'chat',
+                content: task
+            })) {
+                addChatMessage('You', task);
+                addChatMessage('NEXUS', 'Processing with real agents...', 'system');
+                return;
+            }
+            
+            // Fallback to simulation if NEXUS not connected
+            const agentId = 'sim-' + Date.now();
+            const agentType = determineAgentType(task);
+            
+            const agent = {
+                id: agentId,
+                name: `${agentType} Agent (SIM)`,
+                type: agentType,
+                task: task,
+                status: 'working',
+                created: new Date()
+            };
+            
+            state.agents.set(agentId, agent);
+            renderAgents();
+            
+            // Add agent message
+            addChatMessage(agent.name, `Starting task: ${task}`, 'agent');
+            
+            // Create preview tab
+            createPreviewTab(agentId, task);
+            
+            // Simulate agent work
+            setTimeout(() => {
+                agent.status = 'idle';
+                renderAgents();
+                updatePreview(agentId, `Task completed: ${task}\n\nResults would appear here...\n\n[SIMULATION MODE - Connect to NEXUS for real execution]`);
+                addChatMessage(agent.name, 'Task completed! (simulation)', 'agent');
+            }, 3000);
+            
+            return agent;
+        }
+
+        function determineAgentType(task) {
+            const taskLower = task.toLowerCase();
+            if (taskLower.includes('build') || taskLower.includes('create')) return 'Developer';
+            if (taskLower.includes('analyze')) return 'Analyzer';
+            if (taskLower.includes('test')) return 'Tester';
+            if (taskLower.includes('document')) return 'Documenter';
+            return 'General';
+        }
+
+        // UI Rendering
+        function renderAgents() {
+            const agentList = document.getElementById('agentList');
+            agentList.innerHTML = '';
+            
+            state.agents.forEach(agent => {
+                const agentEl = document.createElement('div');
+                agentEl.className = `agent-window ${agent.status} ${agent.id === state.activeAgent ? 'active' : ''}`;
+                agentEl.onclick = () => selectAgent(agent.id);
+                
+                agentEl.innerHTML = `
+                    <div class="agent-name">${agent.name}</div>
+                    <div class="agent-type">${agent.type}</div>
+                    <div class="agent-status">
+                        <span class="status-dot ${agent.status}"></span>
+                        <span>${agent.status}</span>
+                    </div>
+                `;
+                
+                agentList.appendChild(agentEl);
+            });
+        }
+
+        function selectAgent(agentId) {
+            state.activeAgent = agentId;
+            renderAgents();
+            // Switch to agent's preview tab
+            const tabs = document.querySelectorAll('.preview-tab');
+            tabs.forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === agentId);
+            });
+            showPreviewContent(agentId);
+        }
+
+        function createPreviewTab(agentId, task) {
+            const tabsContainer = document.getElementById('previewTabs');
+            const tab = document.createElement('div');
+            tab.className = 'preview-tab';
+            tab.dataset.tab = agentId;
+            tab.textContent = task.substring(0, 20) + '...';
+            tab.onclick = () => {
+                document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                showPreviewContent(agentId);
+            };
+            tabsContainer.appendChild(tab);
+            
+            state.previewTabs.set(agentId, `Working on: ${task}\n\nProcessing...`);
+        }
+
+        function showPreviewContent(tabId) {
+            const content = state.previewTabs.get(tabId) || 'No content';
+            document.getElementById('previewContent').textContent = content;
+        }
+
+        function updatePreview(agentId, content) {
+            state.previewTabs.set(agentId, content);
+            if (state.activeAgent === agentId || !state.activeAgent) {
+                showPreviewContent(agentId);
+            }
+        }
+
+        // Chat functionality
+        function addChatMessage(sender, content, type = 'user') {
+            const messagesEl = document.getElementById('chatMessages');
+            const messageEl = document.createElement('div');
+            messageEl.className = 'chat-message';
+            messageEl.innerHTML = `
+                <span class="message-sender ${type}">${sender}:</span>
+                <span class="message-content">${content}</span>
+            `;
+            messagesEl.appendChild(messageEl);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addChatMessage('You', message);
+            
+            // Create agent for the task
+            createAgent(message);
+            
+            // Clear input
+            input.value = '';
+            input.focus();
+        }
+
+        // Keyboard shortcuts
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('NEXUS 2.0 Stage + Desktop Manager initialized');
+            // Connect to real NEXUS system
+            connectToNEXUS();
+        });
+    </script>
+</body>
+</html>

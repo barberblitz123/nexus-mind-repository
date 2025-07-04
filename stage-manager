@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage Manager Multi-Agent System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+            color: #333;
+            position: relative;
+        }
+
+        /* Agent Window Styles */
+        .agent-window {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        /* Stacked (minimized) state */
+        .agent-window.stacked {
+            width: 80px;
+            height: 120px;
+            transform: scale(0.8);
+            opacity: 0.85;
+        }
+
+        /* Active (expanded) state */
+        .agent-window.active {
+            width: 400px;
+            height: 300px;
+            transform: scale(1);
+            opacity: 1;
+            z-index: 100;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Hover state for stacked windows */
+        .agent-window.stacked:hover {
+            transform: scale(0.85);
+            opacity: 1;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .agent-header {
+            padding: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+        }
+
+        .agent-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        .agent-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .agent-title {
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .agent-subtitle {
+            font-size: 11px;
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .agent-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00b894;
+            flex-shrink: 0;
+        }
+
+        .agent-content {
+            padding: 16px;
+            font-size: 12px;
+            line-height: 1.4;
+            height: calc(100% - 65px);
+            overflow-y: auto;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Hide content when stacked */
+        .agent-window.stacked .agent-content {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .agent-window.stacked .agent-info {
+            opacity: 0;
+        }
+
+        .agent-window.stacked .agent-status {
+            opacity: 0;
+        }
+
+        /* Window Controls */
+        .window-controls {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 6px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .agent-window.active .window-controls {
+            opacity: 1;
+        }
+
+        .window-control {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        .window-control:hover {
+            transform: scale(1.1);
+        }
+
+        .close { background: #ff5f56; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #27ca3f; }
+
+        /* Agent-specific styling */
+        .frontend-agent .agent-header {
+            background: linear-gradient(135deg, #e17055, #f39c12);
+        }
+
+        .backend-agent .agent-header {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+        }
+
+        .database-agent .agent-header {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+        }
+
+        .qa-agent .agent-header {
+            background: linear-gradient(135deg, #e84393, #fd79a8);
+        }
+
+        .devops-agent .agent-header {
+            background: linear-gradient(135deg, #00b894, #55a3ff);
+        }
+
+        .builder-agent .agent-header {
+            background: linear-gradient(135deg, #fdcb6e, #e17055);
+        }
+
+        /* Stack positioning */
+        .stack-left {
+            left: 20px;
+        }
+
+        .stack-right {
+            right: 20px;
+        }
+
+        .stack-bottom {
+            bottom: 20px;
+        }
+
+        .stack-top {
+            top: 20px;
+        }
+
+        /* Progress indicators */
+        .progress-bar {
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        /* Activity indicators */
+        .activity-dot {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 8px;
+            height: 8px;
+            background: #00b894;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .agent-window.active-work .activity-dot {
+            opacity: 1;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        /* Stack indicator */
+        .stack-indicator {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 2px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .agent-window.stacked .stack-indicator {
+            opacity: 1;
+        }
+
+        /* Controls for demo */
+        .demo-controls {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .demo-btn {
+            background: #6c5ce7;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .demo-btn:hover {
+            background: #5a4fcf;
+            transform: translateY(-1px);
+        }
+
+        .position-selector {
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        /* Notification badges */
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #e17055;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo Controls -->
+    <div class="demo-controls">
+        <button class="demo-btn" onclick="addAgent('frontend')">Add Frontend</button>
+        <button class="demo-btn" onclick="addAgent('backend')">Add Backend</button>
+        <button class="demo-btn" onclick="addAgent('database')">Add Database</button>
+        <button class="demo-btn" onclick="addAgent('qa')">Add QA</button>
+        <button class="demo-btn" onclick="addAgent('devops')">Add DevOps</button>
+        <button class="demo-btn" onclick="addAgent('builder')">Add Builder</button>
+        <select class="position-selector" id="stackPosition" onchange="repositionStack()">
+            <option value="left">Stack Left</option>
+            <option value="right">Stack Right</option>
+            <option value="bottom">Stack Bottom</option>
+            <option value="top">Stack Top</option>
+        </select>
+        <button class="demo-btn" onclick="clearAgents()">Clear All</button>
+    </div>
+
+    <script>
+        let agents = [];
+        let activeAgent = null;
+        let stackPosition = 'left';
+        let agentCounter = 0;
+
+        const agentTypes = {
+            frontend: {
+                icon: '🎨',
+                title: 'Frontend Agent',
+                subtitle: 'React & UI/UX',
+                class: 'frontend-agent',
+                tasks: [
+                    'Building React components...',
+                    'Styling with Tailwind CSS...',
+                    'Optimizing performance...',
+                    'Adding animations...',
+                    'Testing responsiveness...'
+                ]
+            },
+            backend: {
+                icon: '⚙️',
+                title: 'Backend Agent',
+                subtitle: 'API & Server',
+                class: 'backend-agent',
+                tasks: [
+                    'Setting up Express server...',
+                    'Creating API endpoints...',
+                    'Database integration...',
+                    'Authentication setup...',
+                    'Error handling...'
+                ]
+            },
+            database: {
+                icon: '🗄️',
+                title: 'Database Agent',
+                subtitle: 'Data & Schema',
+                class: 'database-agent',
+                tasks: [
+                    'Designing schema...',
+                    'Optimizing queries...',
+                    'Setting up migrations...',
+                    'Creating indexes...',
+                    'Backup configuration...'
+                ]
+            },
+            qa: {
+                icon: '🧪',
+                title: 'QA Agent',
+                subtitle: 'Testing & Quality',
+                class: 'qa-agent',
+                tasks: [
+                    'Writing unit tests...',
+                    'Integration testing...',
+                    'E2E test automation...',
+                    'Performance testing...',
+                    'Security auditing...'
+                ]
+            },
+            devops: {
+                icon: '🚀',
+                title: 'DevOps Agent',
+                subtitle: 'Deploy & Monitor',
+                class: 'devops-agent',
+                tasks: [
+                    'Setting up CI/CD...',
+                    'Container configuration...',
+                    'Cloud deployment...',
+                    'Monitoring setup...',
+                    'Scaling optimization...'
+                ]
+            },
+            builder: {
+                icon: '🏗️',
+                title: 'Builder Agent',
+                subtitle: 'Code Generation',
+                class: 'builder-agent',
+                tasks: [
+                    'Generating boilerplate...',
+                    'Creating file structure...',
+                    'Setting up dependencies...',
+                    'Configuring build tools...',
+                    'Optimizing bundle...'
+                ]
+            }
+        };
+
+        function createAgentWindow(type) {
+            const agentConfig = agentTypes[type];
+            const agentId = `agent-${type}-${++agentCounter}`;
+            
+            const agentWindow = document.createElement('div');
+            agentWindow.className = `agent-window ${agentConfig.class} stacked`;
+            agentWindow.id = agentId;
+            
+            const hasNotifications = Math.random() > 0.6;
+            const notificationCount = Math.floor(Math.random() * 5) + 1;
+            
+            agentWindow.innerHTML = `
+                <div class="activity-dot"></div>
+                <div class="window-controls">
+                    <div class="window-control close" onclick="closeAgent('${agentId}')"></div>
+                    <div class="window-control minimize" onclick="minimizeAgent('${agentId}')"></div>
+                    <div class="window-control maximize" onclick="maximizeAgent('${agentId}')"></div>
+                </div>
+                ${hasNotifications ? `<div class="notification-badge">${notificationCount}</div>` : ''}
+                <div class="agent-header">
+                    <div class="agent-icon">${agentConfig.icon}</div>
+                    <div class="agent-info">
+                        <div class="agent-title">${agentConfig.title}</div>
+                        <div class="agent-subtitle">${agentConfig.subtitle}</div>
+                    </div>
+                    <div class="agent-status"></div>
+                </div>
+                <div class="agent-content">
+                    <div id="${agentId}-task">Initializing...</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="${agentId}-progress" style="width: 0%"></div>
+                    </div>
+                    <div style="margin-top: 12px; font-size: 11px; color: #666;">
+                        <div>✓ Environment setup</div>
+                        <div>🔄 Processing request...</div>
+                        <div style="opacity: 0.5;">⏳ Pending validation</div>
+                    </div>
+                </div>
+                <div class="stack-indicator"></div>
+            `;
+
+            agentWindow.addEventListener('click', () => selectAgent(agentId));
+            
+            document.body.appendChild(agentWindow);
+            agents.push({ id: agentId, type, element: agentWindow, config: agentConfig });
+            
+            repositionStack();
+            
+            // Start simulating work
+            simulateAgentWork(agentId, agentConfig);
+            
+            return agentWindow;
+        }
+
+        function selectAgent(agentId) {
+            // Deactivate current active agent
+            if (activeAgent && activeAgent !== agentId) {
+                const currentActive = document.getElementById(activeAgent);
+                if (currentActive) {
+                    currentActive.classList.remove('active');
+                    currentActive.classList.add('stacked');
+                }
+            }
+
+            // Activate selected agent
+            const selectedAgent = document.getElementById(agentId);
+            if (selectedAgent) {
+                selectedAgent.classList.remove('stacked');
+                selectedAgent.classList.add('active');
+                activeAgent = agentId;
+                
+                // Position active agent in center
+                positionActiveAgent(selectedAgent);
+                
+                // Reposition stack
+                repositionStack();
+            }
+        }
+
+        function positionActiveAgent(agent) {
+            const centerX = (window.innerWidth - 400) / 2;
+            const centerY = (window.innerHeight - 300) / 2;
+            
+            agent.style.left = centerX + 'px';
+            agent.style.top = centerY + 'px';
+        }
+
+        function repositionStack() {
+            const stackedAgents = agents.filter(agent => 
+                agent.id !== activeAgent && document.getElementById(agent.id)
+            );
+
+            stackedAgents.forEach((agent, index) => {
+                const element = agent.element;
+                const spacing = 100; // Space between stacked windows
+                
+                switch (stackPosition) {
+                    case 'left':
+                        element.style.left = '20px';
+                        element.style.top = (100 + index * spacing) + 'px';
+                        element.classList.remove('stack-right', 'stack-bottom', 'stack-top');
+                        element.classList.add('stack-left');
+                        break;
+                    case 'right':
+                        element.style.right = '20px';
+                        element.style.left = 'auto';
+                        element.style.top = (100 + index * spacing) + 'px';
+                        element.classList.remove('stack-left', 'stack-bottom', 'stack-top');
+                        element.classList.add('stack-right');
+                        break;
+                    case 'bottom':
+                        element.style.bottom = '20px';
+                        element.style.top = 'auto';
+                        element.style.left = (100 + index * spacing) + 'px';
+                        element.classList.remove('stack-left', 'stack-right', 'stack-top');
+                        element.classList.add('stack-bottom');
+                        break;
+                    case 'top':
+                        element.style.top = '80px';
+                        element.style.bottom = 'auto';
+                        element.style.left = (100 + index * spacing) + 'px';
+                        element.classList.remove('stack-left', 'stack-right', 'stack-bottom');
+                        element.classList.add('stack-top');
+                        break;
+                }
+            });
+        }
+
+        function simulateAgentWork(agentId, config) {
+            const taskElement = document.getElementById(`${agentId}-task`);
+            const progressElement = document.getElementById(`${agentId}-progress`);
+            const agentElement = document.getElementById(agentId);
+            
+            let currentTask = 0;
+            let progress = 0;
+            
+            function updateTask() {
+                if (taskElement && config.tasks[currentTask]) {
+                    taskElement.textContent = config.tasks[currentTask];
+                    agentElement.classList.add('active-work');
+                    
+                    // Animate progress
+                    const targetProgress = ((currentTask + 1) / config.tasks.length) * 100;
+                    const progressInterval = setInterval(() => {
+                        progress += 2;
+                        if (progressElement) {
+                            progressElement.style.width = Math.min(progress, targetProgress) + '%';
+                        }
+                        
+                        if (progress >= targetProgress) {
+                            clearInterval(progressInterval);
+                            agentElement.classList.remove('active-work');
+                            
+                            currentTask++;
+                            if (currentTask < config.tasks.length) {
+                                setTimeout(updateTask, 1000 + Math.random() * 2000);
+                            } else {
+                                // Task complete
+                                if (taskElement) {
+                                    taskElement.textContent = '✅ All tasks completed';
+                                }
+                            }
+                        }
+                    }, 100);
+                }
+            }
+            
+            // Start first task after a short delay
+            setTimeout(updateTask, 1000);
+        }
+
+        function addAgent(type) {
+            createAgentWindow(type);
+        }
+
+        function closeAgent(agentId) {
+            const agent = document.getElementById(agentId);
+            if (agent) {
+                agent.style.transform = 'scale(0)';
+                agent.style.opacity = '0';
+                setTimeout(() => {
+                    agent.remove();
+                    agents = agents.filter(a => a.id !== agentId);
+                    if (activeAgent === agentId) {
+                        activeAgent = null;
+                    }
+                    repositionStack();
+                }, 300);
+            }
+        }
+
+        function minimizeAgent(agentId) {
+            if (activeAgent === agentId) {
+                const agent = document.getElementById(agentId);
+                if (agent) {
+                    agent.classList.remove('active');
+                    agent.classList.add('stacked');
+                    activeAgent = null;
+                    repositionStack();
+                }
+            }
+        }
+
+        function maximizeAgent(agentId) {
+            selectAgent(agentId);
+        }
+
+        function clearAgents() {
+            agents.forEach(agent => {
+                agent.element.remove();
+            });
+            agents = [];
+            activeAgent = null;
+        }
+
+        function repositionStackPosition() {
+            stackPosition = document.getElementById('stackPosition').value;
+            repositionStack();
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && activeAgent) {
+                minimizeAgent(activeAgent);
+            }
+        });
+
+        // Initialize with some agents
+        setTimeout(() => {
+            addAgent('frontend');
+        }, 500);
+
+        setTimeout(() => {
+            addAgent('backend');
+        }, 1000);
+
+        setTimeout(() => {
+            addAgent('builder');
+        }, 1500);
+
+        // Auto-select first agent
+        setTimeout(() => {
+            if (agents.length > 0) {
+                selectAgent(agents[0].id);
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

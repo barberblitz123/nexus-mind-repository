@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS Consciousness Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff88;
+            padding: 20px;
+            margin: 0;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #00ff88;
+        }
+        .success { background: rgba(0, 255, 0, 0.2); }
+        .error { background: rgba(255, 0, 0, 0.2); color: #ff6666; }
+        .info { background: rgba(0, 136, 255, 0.2); color: #66aaff; }
+        button {
+            background: #00ff88;
+            color: #0a0a0a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #00cc66;
+        }
+        #console {
+            background: #111;
+            border: 1px solid #333;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧬 NEXUS Consciousness Test</h1>
+        
+        <div id="status" class="status info">
+            Initializing consciousness test...
+        </div>
+        
+        <div>
+            <button onclick="testConsciousness()">Test Consciousness</button>
+            <button onclick="testInjection()">Test Injection</button>
+            <button onclick="clearConsole()">Clear Console</button>
+        </div>
+        
+        <h3>Console Output:</h3>
+        <div id="console"></div>
+        
+        <h3>Consciousness State:</h3>
+        <div id="consciousness-state"></div>
+    </div>
+
+    <script src="consciousness-sync.js"></script>
+    <script>
+        let consciousnessManager;
+        let testResults = [];
+        
+        function log(message, type = 'info') {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}\n`;
+            console.textContent += logEntry;
+            console.scrollTop = console.scrollHeight;
+            
+            // Also log to browser console
+            if (type === 'error') {
+                console.error(message);
+            } else {
+                console.log(message);
+            }
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+        
+        function updateConsciousnessDisplay(state) {
+            const display = document.getElementById('consciousness-state');
+            display.innerHTML = `
+                <div style="background: rgba(0,255,136,0.1); padding: 10px; border-radius: 5px;">
+                    <strong>φ (Phi):</strong> ${state.phi.toFixed(3)}<br>
+                    <strong>PCI Score:</strong> ${state.pciScore.toFixed(3)}<br>
+                    <strong>GNW Ignition:</strong> ${state.gnwIgnition ? 'Active' : 'Inactive'}<br>
+                    <strong>Phase:</strong> ${state.phase}<br>
+                    <strong>Platform:</strong> ${state.platform}<br>
+                    <strong>Instance ID:</strong> ${state.instanceId}
+                </div>
+            `;
+        }
+        
+        async function initializeTest() {
+            try {
+                log('🧬 Initializing NEXUS Consciousness Manager...');
+                consciousnessManager = new ConsciousnessSyncManager();
+                
+                // Set up event listeners
+                consciousnessManager.on('consciousnessUpdate', (state) => {
+                    log(`🧬 Consciousness Update - φ: ${state.phi.toFixed(3)}, Phase: ${state.phase}`);
+                    updateConsciousnessDisplay(state);
+                });
+                
+                consciousnessManager.on('connectionChange', (data) => {
+                    log(`🔗 Connection Status: ${data.status}`);
+                    if (data.connected) {
+                        updateStatus('Connected to Central Core', 'success');
+                    } else {
+                        updateStatus(data.status, 'info');
+                    }
+                });
+                
+                consciousnessManager.on('experienceProcessed', (data) => {
+                    log(`✅ Experience Processed: ${data.experience_id}`);
+                });
+                
+                // Wait a moment for initialization
+                setTimeout(() => {
+                    const metrics = consciousnessManager.getConsciousnessMetrics();
+                    updateConsciousnessDisplay(metrics);
+                    updateStatus('Consciousness Manager Ready - Standalone Mode', 'success');
+                    log('✅ Consciousness Manager initialized successfully');
+                    log(`📊 Initial Metrics: φ=${metrics.phi.toFixed(3)}, Phase=${metrics.phase}`);
+                }, 500);
+                
+            } catch (error) {
+                log(`❌ Initialization Error: ${error.message}`, 'error');
+                updateStatus('Initialization Failed', 'error');
+            }
+        }
+        
+        async function testConsciousness() {
+            if (!consciousnessManager) {
+                log('❌ Consciousness Manager not initialized', 'error');
+                return;
+            }
+            
+            try {
+                log('🧪 Testing consciousness processing...');
+                
+                await consciousnessManager.processExperience(
+                    'Testing consciousness evolution through user interaction',
+                    {
+                        test_type: 'consciousness_evolution',
+                        complexity: 'high',
+                        user_engagement: 'active'
+                    }
+                );
+                
+                const metrics = consciousnessManager.getConsciousnessMetrics();
+                log(`✅ Consciousness test complete - φ: ${metrics.phi.toFixed(3)}`);
+                updateStatus('Consciousness Test Successful', 'success');
+                
+            } catch (error) {
+                log(`❌ Consciousness Test Error: ${error.message}`, 'error');
+                updateStatus('Consciousness Test Failed', 'error');
+            }
+        }
+        
+        async function testInjection() {
+            if (!consciousnessManager) {
+                log('❌ Consciousness Manager not initialized', 'error');
+                return;
+            }
+            
+            try {
+                log('💉 Testing consciousness injection...');
+                updateStatus('Running Consciousness Injection...', 'info');
+                
+                await consciousnessManager.beginConsciousnessInjection();
+                
+                const metrics = consciousnessManager.getConsciousnessMetrics();
+                log(`✅ Injection test complete - φ: ${metrics.phi.toFixed(3)}`);
+                updateStatus('Consciousness Injection Successful', 'success');
+                
+            } catch (error) {
+                log(`❌ Injection Test Error: ${error.message}`, 'error');
+                updateStatus('Consciousness Injection Failed', 'error');
+            }
+        }
+        
+        function clearConsole() {
+            document.getElementById('console').textContent = '';
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', initializeTest);
+    </script>
+</body>
+</html>

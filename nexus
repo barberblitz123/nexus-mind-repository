@@ -113,8 +113,8 @@ For more information: https://nexus.ai/docs
         
         # Import and run configuration wizard
         try:
-            from nexus_config_wizard import ConfigurationWizard
-            wizard = ConfigurationWizard()
+            from nexus_config_wizard import ConfigWizard
+            wizard = ConfigWizard()
             config = await wizard.run()
             
             # Save configuration
@@ -135,8 +135,13 @@ For more information: https://nexus.ai/docs
                         "voice": False,
                         "vision": False,
                         "web_scraping": True,
+                        "web_interface": True,
                         "memory": True
                     }
+                },
+                "web": {
+                    "host": "127.0.0.1",
+                    "port": 8080
                 }
             }
             self.config_dir.mkdir(parents=True, exist_ok=True)
